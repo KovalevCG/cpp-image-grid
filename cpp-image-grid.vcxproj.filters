@@ -21,32 +21,24 @@
       <UniqueIdentifier>{639EADAA-A684-42e4-A9AD-28FC9BCB8F7C}</UniqueIdentifier>
       <Extensions>ts</Extensions>
     </Filter>
-    <Filter Include="Resource Files\images">
-      <UniqueIdentifier>{b836b464-a183-4bb8-921f-e15604e1d74c}</UniqueIdentifier>
-    </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <QtUic Include="imagegrid.ui">
-      <Filter>Form Files</Filter>
-    </QtUic>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtwindow.cpp">
+    <ClCompile Include="qt-window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="opencv.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="imagelabel.cpp">
+    <ClCompile Include="image-label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="globalresources.cpp">
+    <ClCompile Include="global-resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qtgrid.cpp">
+    <ClCompile Include="dynamic-qt-grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -54,27 +46,19 @@
     <ClInclude Include="opencv.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="globalresources.h">
+    <ClInclude Include="global-resources.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <QtMoc Include="qtwindow.h">
+    <QtMoc Include="qt-window.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="imagelabel.h">
+    <QtMoc Include="image-label.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="qtgrid.h">
+    <QtMoc Include="dynamic-qt-grid.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="D:\bg_image_opencv.png">
-      <Filter>Resource Files\images</Filter>
-    </Image>
-    <Image Include="D:\bg_image_qt.png">
-      <Filter>Resource Files\images</Filter>
-    </Image>
   </ItemGroup>
 </Project>

@@ -1,4 +1,5 @@
-#include "imagelabel.h"
+#include "image-label.h"
+
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
@@ -83,7 +84,7 @@ void ImageLabel::dropEvent(QDropEvent* event) {
             QImage image(url.toLocalFile());
             if (!image.isNull()) {
                 setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-                globalResources.setImagePath(getCol(), getRow(), mimeData->urls().first().toLocalFile().toStdString());
+                GlobalResources::setImagePath(getCol(), getRow(), mimeData->urls().first().toLocalFile().toStdString());
                 //cout << "img_paths[0][0]: " << globalResources.getImagePath(0, 0) << endl;
                 //cout << "img_paths[1][0]: " << globalResources.getImagePath(1, 0) << endl;
             }

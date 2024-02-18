@@ -1,9 +1,9 @@
 #pragma once
-#include "globalresources.h"
+#include "global-resources.h"
 
 class OpenCV {
 public:
     void displayOpenCVWindow();
 private:
-    GlobalResources globalResources;
+    // GlobalResources globalResources;
 };

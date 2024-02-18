@@ -2,7 +2,7 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include "globalresources.h"
+#include "global-resources.h"
 
 class QtWindow : public QMainWindow {
     Q_OBJECT
@@ -20,7 +20,6 @@ private:
     // QWidget* centralWidget;
     void setupUi();
     void quitApp();
-    GlobalResources globalResources; // Add PathsManager as a member variable
-    // std::array<std::array<std::string, 20>, 20> img_paths;
+    // GlobalResources globalResources; // Add PathsManager as a member variable
 
 };
