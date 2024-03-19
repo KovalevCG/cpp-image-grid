@@ -1,6 +1,7 @@
 #pragma once
 
-#include "globalresources.h"
+#include "global-resources.h"
+
 #include <QLabel>
 #include <QMimeData>
 
@@ -20,7 +21,7 @@ private:
 	int label_row = 0;
 	void dragEnterEvent(QDragEnterEvent* event) override;
 	void dropEvent(QDropEvent* event) override;
-	GlobalResources globalResources;
+	// GlobalResources globalResources;
 
 };
 

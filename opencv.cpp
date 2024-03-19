@@ -9,9 +9,9 @@ void OpenCV::displayOpenCVWindow() {
 
 
 
-    cv::Mat img1 = cv::imread(globalResources.getImagePath(0, 0));
+    cv::Mat img1 = cv::imread(GlobalResources::getImagePath(0, 0));
 
-    cv::Mat img2 = cv::imread(globalResources.getImagePath(1, 0));
+    cv::Mat img2 = cv::imread(GlobalResources::getImagePath(1, 0));
 
     // Ensure images are loaded
     //if (img1.empty() || img2.empty()) {

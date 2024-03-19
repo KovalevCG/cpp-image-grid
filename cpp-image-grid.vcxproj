@@ -97,27 +97,21 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="imagelabel.cpp" />
-    <ClCompile Include="globalresources.cpp" />
-    <ClCompile Include="qtgrid.cpp" />
-    <ClCompile Include="qtwindow.cpp" />
+    <ClCompile Include="image-label.cpp" />
+    <ClCompile Include="global-resources.cpp" />
+    <ClCompile Include="dynamic-qt-grid.cpp" />
+    <ClCompile Include="qt-push-button.cpp" />
+    <ClCompile Include="qt-window.cpp" />
     <ClCompile Include="opencv.cpp" />
-    <QtUic Include="imagegrid.ui" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="globalresources.h" />
-    <QtMoc Include="qtgrid.h" />
-    <QtMoc Include="imagelabel.h" />
+    <ClInclude Include="global-resources.h" />
+    <QtMoc Include="qt-push-button.h" />
+    <QtMoc Include="dynamic-qt-grid.h" />
+    <QtMoc Include="image-label.h" />
     <ClInclude Include="opencv.h" />
-    <QtMoc Include="qtwindow.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="D:\bg_image_opencv.png">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-    </Image>
-    <Image Include="D:\bg_image_qt.png" />
+    <QtMoc Include="qt-window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
