@@ -11,11 +11,12 @@ class DynamicQtGrid : public QWidget {
 
 public:
 	explicit DynamicQtGrid(QWidget* parent = nullptr);
+	void recreateGrid();
 	// void recreateQtGrid(int rows, int cols); // Method to recreate the layout
 
 private:
-	void recreateGrid();
 	void clearLayout(QLayout* layout); // Utility method to clear the existing layout
+	void combineColumn(int i);
 	QGridLayout* gridLayout;
 
 //private slots:

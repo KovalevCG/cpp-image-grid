@@ -6,7 +6,6 @@
 
 class QtWindow : public QMainWindow {
     Q_OBJECT
-    // friend class OpenCV;
 
 public:
     QtWindow(QWidget* parent = nullptr);

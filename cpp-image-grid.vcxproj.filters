@@ -41,6 +41,9 @@
     <ClCompile Include="dynamic-qt-grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="qt-push-button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="opencv.h">
@@ -58,6 +61,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="dynamic-qt-grid.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="qt-push-button.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

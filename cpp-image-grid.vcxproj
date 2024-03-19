@@ -100,12 +100,14 @@
     <ClCompile Include="image-label.cpp" />
     <ClCompile Include="global-resources.cpp" />
     <ClCompile Include="dynamic-qt-grid.cpp" />
+    <ClCompile Include="qt-push-button.cpp" />
     <ClCompile Include="qt-window.cpp" />
     <ClCompile Include="opencv.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global-resources.h" />
+    <QtMoc Include="qt-push-button.h" />
     <QtMoc Include="dynamic-qt-grid.h" />
     <QtMoc Include="image-label.h" />
     <ClInclude Include="opencv.h" />

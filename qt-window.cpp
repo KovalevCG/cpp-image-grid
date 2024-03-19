@@ -58,7 +58,8 @@ void QtWindow::setupUi() {
     //ilabel2->setPosition(1, 0);
 
     DynamicQtGrid* dynamicQtGrid = new DynamicQtGrid;
-    // QWidget* dynamicQtGrid;
+    //dynamicQtGrid->recreateGrid();
+    //QWidget* dynamicQtGrid;
 
 
 
