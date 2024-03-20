@@ -24,4 +24,3 @@ private:
 	// GlobalResources globalResources;
 
 };
-

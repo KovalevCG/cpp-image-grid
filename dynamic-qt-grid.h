@@ -19,11 +19,10 @@ private:
 	void combineColumn(int i);
 	QGridLayout* gridLayout;
 
-//private slots:
-//    void addRow();
-//    void addColumn();
-//    void deleteRow();
-//    void deleteColumn();
+	//private slots:
+	//    void addRow();
+	//    void addColumn();
+	//    void deleteRow();
+	//    void deleteColumn();
 
 };
-

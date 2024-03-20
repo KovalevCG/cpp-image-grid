@@ -23,48 +23,53 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <QtRcc Include="cppimagegrid.qrc">
+      <Filter>Resource Files</Filter>
+    </QtRcc>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="qt-window.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="opencv.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="image-label.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="global-resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="dynamic-qt-grid.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="qt-push-button.cpp">
+    <ClCompile Include="global-resources.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="id-button.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="image-label.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="opencv.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="qt-window.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="opencv.h">
+    <QtMoc Include="dynamic-qt-grid.h">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="global-resources.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <QtMoc Include="qt-window.h">
+    </QtMoc>
+    <QtMoc Include="id-button.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="image-label.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="dynamic-qt-grid.h">
+    <QtMoc Include="qt-window.h">
       <Filter>Header Files</Filter>
     </QtMoc>
-    <QtMoc Include="qt-push-button.h">
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="global-resources.h">
       <Filter>Header Files</Filter>
-    </QtMoc>
+    </ClInclude>
+    <ClInclude Include="opencv.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

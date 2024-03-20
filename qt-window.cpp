@@ -98,7 +98,7 @@ void QtWindow::onEditButtonClicked() {
 }
 
 void QtWindow::onDebugButtonClicked() {
-    std::cout << "<<<<<< Debug >>>>>>" <<endl;
+    std::cout << "<<<<<< Debug >>>>>>" << endl;
     cout << "img_paths[0][0]: " << GlobalResources::getImagePath(0, 0) << endl;
     cout << "img_paths[1][0]: " << GlobalResources::getImagePath(1, 0) << endl;
 

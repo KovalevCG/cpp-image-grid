@@ -7,7 +7,7 @@
 #include <QIcon>
 
 DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
-	gridLayout = new QGridLayout(this);
+    gridLayout = new QGridLayout(this);
     recreateGrid();
 };
 
@@ -53,7 +53,7 @@ void DynamicQtGrid::recreateGrid() {
 
 
 
-	// QVBoxLayout* main_layout = new QVBoxLayout(centralWidget);
+    // QVBoxLayout* main_layout = new QVBoxLayout(centralWidget);
 
 };
 

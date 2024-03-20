@@ -1,4 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+***************************************************************************************************
+ Copyright (C) 2023 The Qt Company Ltd.
+ SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+***************************************************************************************************
+-->
 <Project DefaultTargets="Build" ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|x64">
@@ -11,7 +17,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{4FB879CC-ABB4-4E2D-950C-49C4AD4CA3E8}</ProjectGuid>
+    <ProjectGuid>{55F3BF81-803C-47F2-BD7C-E4322F39E5C9}</ProjectGuid>
     <Keyword>QtVS_v304</Keyword>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
     <WindowsTargetPlatformVersion Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">10.0.19041.0</WindowsTargetPlatformVersion>
@@ -31,12 +37,12 @@
     <Import Project="$(QtMsBuild)\qt_defaults.props" />
   </ImportGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'" Label="QtSettings">
-    <QtInstall>6.5.0</QtInstall>
+    <QtInstall>6.5.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>debug</QtBuildConfig>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'" Label="QtSettings">
-    <QtInstall>6.5.0</QtInstall>
+    <QtInstall>6.5.0_msvc2019_64</QtInstall>
     <QtModules>core;gui;widgets</QtModules>
     <QtBuildConfig>release</QtBuildConfig>
   </PropertyGroup>
@@ -55,20 +61,24 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <IncludePath>C:\opencv\opencv-4.9.0\opencv\build\include\</IncludePath>
-    <LibraryPath>C:\opencv\opencv-4.9.0\opencv\build\x64\vc16\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <IncludePath>C:\opencv\opencv-4.9.0\opencv\build\include\</IncludePath>
-    <LibraryPath>C:\opencv\opencv-4.9.0\opencv\build\x64\vc16\lib\;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\opencv\opencv-4.9.0\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <Link>
+      <AdditionalLibraryDirectories>C:\opencv\opencv-4.9.0\opencv\build\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world490.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>C:\opencv\opencv-4.9.0\opencv\build\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ClCompile>
     <Link>
+      <AdditionalLibraryDirectories>C:\opencv\opencv-4.9.0\opencv\build\x64\vc16\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opencv_world490d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -97,21 +107,24 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="image-label.cpp" />
-    <ClCompile Include="global-resources.cpp" />
-    <ClCompile Include="dynamic-qt-grid.cpp" />
-    <ClCompile Include="qt-push-button.cpp" />
-    <ClCompile Include="qt-window.cpp" />
     <ClCompile Include="opencv.cpp" />
+    <ClCompile Include="qt-window.cpp" />
+    <QtRcc Include="cppimagegrid.qrc" />
+    <ClCompile Include="dynamic-qt-grid.cpp" />
+    <ClCompile Include="global-resources.cpp" />
+    <ClCompile Include="id-button.cpp" />
+    <ClCompile Include="image-label.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="global-resources.h" />
-    <QtMoc Include="qt-push-button.h" />
     <QtMoc Include="dynamic-qt-grid.h" />
-    <QtMoc Include="image-label.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="global-resources.h" />
     <ClInclude Include="opencv.h" />
     <QtMoc Include="qt-window.h" />
+    <QtMoc Include="image-label.h" />
+    <QtMoc Include="id-button.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">

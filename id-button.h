@@ -3,15 +3,14 @@
 #include <QPushButton>
 
 
-class PositionedButton : public QPushButton {
+class IdButton : public QPushButton {
 	Q_OBJECT
 
 public:
-	PositionedButton(QWidget* parent = nullptr);
+	IdButton(QWidget* parent = nullptr);
 
 private:
-	int position = -10;
+	int id = 0;
 
 
 };
-
