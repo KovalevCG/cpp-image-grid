@@ -1,5 +1,6 @@
 #include "dynamic-qt-grid.h"
 #include "global-resources.h"
+// #include "id-button.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -17,8 +18,8 @@ void DynamicQtGrid::recreateGrid() {
     clearLayout(gridLayout);
 
     QHBoxLayout* top_buttons_layout = new QHBoxLayout();
-    top_buttons_layout->setSpacing(0);
-    //QVBoxLayout* left_buttons_layout = new QVBoxLayout(this);
+    // top_buttons_layout->setSpacing(0);
+    QVBoxLayout* left_buttons_layout = new QVBoxLayout();
     //QVBoxLayout* images_layout = new QVBoxLayout(this);
     //QVBoxLayout* right_buttons_layout = new QVBoxLayout(this);
     //right_buttons_layout->setSpacing(0);
@@ -26,7 +27,7 @@ void DynamicQtGrid::recreateGrid() {
     //bottom_buttons_layout->setSpacing(0);
 
     gridLayout->addLayout(top_buttons_layout, 0, 1);
-    //gridLayout->addLayout(left_buttons_layout, 1, 0);
+    gridLayout->addLayout(left_buttons_layout, 1, 0);
     //gridLayout->addLayout(images_layout, 1, 1);
     //gridLayout->addLayout(right_buttons_layout, 1, 2);
     //gridLayout->addLayout(bottom_buttons_layout, 2, 1);
@@ -35,27 +36,37 @@ void DynamicQtGrid::recreateGrid() {
 
     // Top Buttons Layout
     for (int i = 0; i < GlobalResources::num_of_cols; i++) {
-        QPushButton* button = new QPushButton(this);
-        button->setToolTip("Merge column");
-        if (GlobalResources::combined_cols[i]) {
-            button->setIcon(QIcon("images/icons/demerge-column.svg"));
+        QPushButton* mergeColumnButton = new QPushButton(this);
+        mergeColumnButton->setToolTip("Merge column");
+        if (GlobalResources::merged_cols[i]) {
+            mergeColumnButton->setIcon(QIcon("images/icons/demerge-column.svg"));
         }
         else {
-            button->setIcon(QIcon("images/icons/merge-column.svg"));
+            mergeColumnButton->setIcon(QIcon("images/icons/merge-column.svg"));
         }
-        top_buttons_layout->addWidget(button);
-        // connect(button, &QPushButton::clicked, [this]() { this->combineColumn(i); });
-        //button1.clicked.connect(lambda state, x = c: self.combine_column(x))
+        top_buttons_layout->addWidget(mergeColumnButton);
+        connect(mergeColumnButton, &QPushButton::clicked, this, [this, i]() {
+            onMergeColumnButtonClicked(i);
+            });
     }
 
-
-
-
-
-
-    // QVBoxLayout* main_layout = new QVBoxLayout(centralWidget);
-
+    // Left Buttons Layout
+    for (int i = 0; i < GlobalResources::num_of_rows; i++) {
+        QPushButton* mergeRowButton = new QPushButton(this);
+        mergeRowButton->setToolTip("Merge row");
+        if (GlobalResources::merged_rows[i]) {
+            mergeRowButton->setIcon(QIcon("images/icons/demerge-row.svg"));
+        }
+        else {
+            mergeRowButton->setIcon(QIcon("images/icons/merge-row.svg"));
+        }
+        left_buttons_layout->addWidget(mergeRowButton);
+        connect(mergeRowButton, &QPushButton::clicked, this, [this, i]() {
+            onMergeRowButtonClicked(i);
+            });
+     }
 };
+
 
 void DynamicQtGrid::clearLayout(QLayout* layout) {
     QLayoutItem* item;
@@ -71,6 +82,14 @@ void DynamicQtGrid::clearLayout(QLayout* layout) {
     }
 }
 
-void DynamicQtGrid::combineColumn(int i) {
-    GlobalResources::combined_cols[i] = !GlobalResources::combined_cols[i];
+
+void DynamicQtGrid::onMergeColumnButtonClicked(int i) {
+    GlobalResources::merged_cols[i] = !GlobalResources::merged_cols[i];
+    DynamicQtGrid::recreateGrid();
+}
+
+
+void DynamicQtGrid::onMergeRowButtonClicked(int i) {
+    GlobalResources::merged_rows[i] = !GlobalResources::merged_rows[i];
+    DynamicQtGrid::recreateGrid();
 }

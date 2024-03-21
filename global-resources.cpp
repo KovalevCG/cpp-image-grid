@@ -11,8 +11,8 @@ void GlobalResources::initGlobalResources() {
 
 // Variables
 std::array<std::array<std::string, 20>, 20> GlobalResources::img_paths;
-std::array<bool, 20> GlobalResources::combined_cols{ false };
-std::array<bool, 20> GlobalResources::combined_rows{ false };
+std::array<bool, 20> GlobalResources::merged_cols{ false };
+std::array<bool, 20> GlobalResources::merged_rows{ false };
 int GlobalResources::num_of_cols = 2;
 int GlobalResources::num_of_rows = 2;
 

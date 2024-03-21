@@ -37,9 +37,6 @@
     <ClCompile Include="global-resources.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="id-button.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="image-label.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -52,9 +49,6 @@
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="dynamic-qt-grid.h">
-      <Filter>Header Files</Filter>
-    </QtMoc>
-    <QtMoc Include="id-button.h">
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="image-label.h">

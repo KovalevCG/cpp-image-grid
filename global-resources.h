@@ -14,8 +14,8 @@ public:
     // Variables
     static int num_of_cols;
     static int num_of_rows;
-    static std::array<bool, 20> combined_cols;
-    static std::array<bool, 20> combined_rows;
+    static std::array<bool, 20> merged_cols;
+    static std::array<bool, 20> merged_rows;
 
 private:
 

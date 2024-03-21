@@ -112,7 +112,6 @@
     <QtRcc Include="cppimagegrid.qrc" />
     <ClCompile Include="dynamic-qt-grid.cpp" />
     <ClCompile Include="global-resources.cpp" />
-    <ClCompile Include="id-button.cpp" />
     <ClCompile Include="image-label.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
@@ -124,7 +123,6 @@
     <ClInclude Include="opencv.h" />
     <QtMoc Include="qt-window.h" />
     <QtMoc Include="image-label.h" />
-    <QtMoc Include="id-button.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Condition="Exists('$(QtMsBuild)\qt.targets')">
