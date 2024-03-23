@@ -11,6 +11,8 @@ public:
     static void setImagePath(size_t col, size_t row, const std::string& img_path);
     static std::string getImagePath(size_t col, size_t row);
     static void initGlobalResources();
+    static bool anyMergedCols();
+    static bool anyMergedRows();
     // Variables
     static int num_of_cols;
     static int num_of_rows;

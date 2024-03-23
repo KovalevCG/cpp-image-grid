@@ -7,6 +7,9 @@
 #include <QPushButton>
 #include <QIcon>
 
+#include <algorithm>
+#include <iostream>
+
 DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
     gridLayout = new QGridLayout(this);
     recreateGrid();
@@ -20,7 +23,7 @@ void DynamicQtGrid::recreateGrid() {
     QHBoxLayout* top_buttons_layout = new QHBoxLayout();
     // top_buttons_layout->setSpacing(0);
     QVBoxLayout* left_buttons_layout = new QVBoxLayout();
-    //QVBoxLayout* images_layout = new QVBoxLayout(this);
+    QVBoxLayout* images_layout = new QVBoxLayout();
     //QVBoxLayout* right_buttons_layout = new QVBoxLayout(this);
     //right_buttons_layout->setSpacing(0);
     //QHBoxLayout* bottom_buttons_layout = new QHBoxLayout(this);
@@ -28,7 +31,7 @@ void DynamicQtGrid::recreateGrid() {
 
     gridLayout->addLayout(top_buttons_layout, 0, 1);
     gridLayout->addLayout(left_buttons_layout, 1, 0);
-    //gridLayout->addLayout(images_layout, 1, 1);
+    gridLayout->addLayout(images_layout, 1, 1);
     //gridLayout->addLayout(right_buttons_layout, 1, 2);
     //gridLayout->addLayout(bottom_buttons_layout, 2, 1);
 
@@ -65,6 +68,16 @@ void DynamicQtGrid::recreateGrid() {
             onMergeRowButtonClicked(i);
             });
      }
+
+    // Test and print if any row/col combined
+    std::cout << "<<<<<< New Grid >>>>>>" << std::endl;
+    std::cout << "GlobalResources::anyMergedCols(): " << GlobalResources::anyMergedCols() << std::endl;
+    std::cout << "GlobalResources::anyMergedRows(): " << GlobalResources::anyMergedRows() << std::endl;
+
+
+    // Images Layout
+
+
 };
 
 
