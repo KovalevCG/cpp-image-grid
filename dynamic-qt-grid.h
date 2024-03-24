@@ -18,6 +18,11 @@ private:
 	void clearLayout(QLayout* layout); // Utility method to clear the existing layout
 	void onMergeColumnButtonClicked(int i);
 	void onMergeRowButtonClicked(int i);
+	void hideColumn();
+	void addColumn();
+	void hideRow();
+	void addRow();
+	void printLayoutChildren(QLayout* layout);
 	QGridLayout* gridLayout;
 
 	//private slots:

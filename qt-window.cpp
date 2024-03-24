@@ -1,6 +1,6 @@
 #include "qt-window.h"
 #include "opencv.h"
-#include "image-label.h"
+// #include "image-label.h"
 #include "dynamic-qt-grid.h"
 
 #include <QRect>
@@ -31,7 +31,8 @@ void QtWindow::setupUi() {
 
     // Window adjutments
     this->setWindowTitle("Image Grid");
-    this->resize(350, 200);
+    // this->setFixedSize(350, 300);
+    this->resize(150 * GlobalResources::num_of_cols + 180, 130 * GlobalResources::num_of_rows + 180 + 100);
     this->setWindowIcon(QIcon("./images/logo/Logo-V1.png"));
     this->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
