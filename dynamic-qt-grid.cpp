@@ -57,14 +57,14 @@ void DynamicQtGrid::recreateGrid() {
             mergeColumnButton->setIcon(QIcon("images/icons/merge-column.svg"));
         }
         topButtonsLayout->addWidget(mergeColumnButton);
-        connect(mergeColumnButton, &QPushButton::clicked, this, [this, i]() {
-            onMergeColumnButtonClicked(i);
-            });
+        connect(mergeColumnButton, &QPushButton::clicked, this, [this, i]() { onMergeColumnButtonClicked(i); });
     }
 
     // Left Buttons Layout
     for (int i = 0; i < GlobalResources::num_of_rows; i++) {
+        // create button
         QPushButton* mergeRowButton = new QPushButton(this);
+        // setup button
         mergeRowButton->setToolTip("Merge row");
         if (GlobalResources::merged_rows[i]) {
             mergeRowButton->setIcon(QIcon("images/icons/demerge-row.svg"));
@@ -72,26 +72,51 @@ void DynamicQtGrid::recreateGrid() {
         else {
             mergeRowButton->setIcon(QIcon("images/icons/merge-row.svg"));
         }
+        mergeRowButton->setFixedWidth(25);
+        mergeRowButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
+        // add button to layout
         leftButtonsLayout->addWidget(mergeRowButton);
+        // connect button
         connect(mergeRowButton, &QPushButton::clicked, this, [this, i]() {
             onMergeRowButtonClicked(i);
             });
      }
 
     // Images Layout
-    // if we don't have combined columns
-    if (!GlobalResources::anyMergedCols()) {
-        for (int i = 0; i < GlobalResources::num_of_rows; i++) {
+    if (!GlobalResources::anyMergedCols()) {        // if we don't have combined columns
+        for (int r = 0; r < GlobalResources::num_of_rows; r++) {
             QHBoxLayout* insideImgLayout = new QHBoxLayout();
             imagesLayout->addLayout(insideImgLayout);
-            if (GlobalResources::merged_rows[i]) {
-                ImageLabel* i_label = new ImageLabel();
+            if (GlobalResources::merged_rows[r]) {      // current row merged
+                ImageLabel* i_label = new ImageLabel(0, r);
                 insideImgLayout->addWidget(i_label);
             }
-
+            else {      // current row not merged
+                for (int c = 0; c < GlobalResources::num_of_cols; c++) {
+                    ImageLabel* i_label = new ImageLabel(c, r);
+                    insideImgLayout->addWidget(i_label);
+                }
+            }
+        }
+    }
+    else {     // if we have combined columns
+        for (int c = 0; c < GlobalResources::num_of_cols; c++) {
+            QVBoxLayout* insideImgLayout = new QVBoxLayout();
+            imagesLayout->addLayout(insideImgLayout);
+            if (GlobalResources::merged_cols[c]) {      // current column merged
+                ImageLabel* i_label = new ImageLabel(c, 0);
+                insideImgLayout->addWidget(i_label);
+            }
+            else {      // current column not merged
+                for (int r = 0; r < GlobalResources::num_of_rows; r++) {
+                    ImageLabel* i_label = new ImageLabel(c, r);
+                    insideImgLayout->addWidget(i_label);
+                }
+            }
         }
 
     }
+
 
     // Right Buttons Layout
     // hide column button
@@ -211,7 +236,7 @@ void DynamicQtGrid::addRow() {
         DynamicQtGrid::recreateGrid();
     }
 }
-
+// To Do: Calculate number of all elements in main window, check for memory safety
 void DynamicQtGrid::printLayoutChildren(QLayout* layout) {
     std::cout << "----- Start of Layout Children Print ------" << "; layout->count(): " << layout->count() << std::endl;
     if (!layout) {

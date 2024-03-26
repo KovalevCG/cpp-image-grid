@@ -12,21 +12,38 @@ using namespace std;
 
 
 
-ImageLabel::ImageLabel(QWidget* parent) : QLabel(parent) {
+ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), label_col(col), label_row(row) {
+
     setAcceptDrops(true);
     // setStyleSheet("QLabel { border: 2px dashed gray; background-color: rgba(255, 255, 255, 0.5); }");
-    setStyleSheet("QLabel { border: 4px dashed #aaa; background-color: rgba(255, 255, 255, 0.5); }");
-    setMinimumSize(100, 100); // Ensure the label is visible
-    setScaledContents(false);
-    setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+    // setStyleSheet("QLabel { border: 4px dashed #aaa; background-color: rgba(255, 255, 255, 0.5); }");
+    // setMinimumSize(100, 100); // Ensure the label is visible
+    setFixedSize(200, 150);
+    setScaledContents(true);
+    // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
+    // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     setAlignment(Qt::AlignCenter);
-    setText("Drop Image Here");
+    // setText("Drop Image Here");
+    setImage();
 }
 
-void ImageLabel::setPosition(int col, int row) {
-    label_col = col;
-    label_row = row;
+//void ImageLabel::setPosition(int col, int row) {
+//    label_col = col;
+//    label_row = row;
+//}
+
+void ImageLabel::setImage() {
+    QString qstr_path = QString::fromStdString(GlobalResources::getImagePath(label_col, label_row));
+    QPixmap icon(qstr_path);
+    // setScaledContents(true);
+    // Scale pixmap to fill the fixed size of the label, maintaining aspect ratio without expanding.
+    QPixmap scaledPixmap = icon.scaled(this->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+    setPixmap(scaledPixmap);
+    // setPixmap(icon);
 }
+    // setPixmap(icon.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+    // setAlignment(Qt::AlignCenter);
+
 
 int ImageLabel::getCol() {
     return label_col;
@@ -57,9 +74,9 @@ void ImageLabel::dropEvent(QDropEvent* event) {
         // I should remove this later
         //std::cout << "hasImage() Drop" << std::endl;
         // Direct image data (e.g., from another application)
-        auto image = qvariant_cast<QImage>(mimeData->imageData());
-        setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        event->acceptProposedAction();
+        //auto image = qvariant_cast<QImage>(mimeData->imageData());
+        //setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+        //event->acceptProposedAction();
     }
     else if (mimeData->hasUrls()) {
         //std::cout << "hasUrls() Drop" << std::endl;
@@ -83,8 +100,9 @@ void ImageLabel::dropEvent(QDropEvent* event) {
             auto url = urls.first();
             QImage image(url.toLocalFile());
             if (!image.isNull()) {
-                setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
+                // setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 GlobalResources::setImagePath(getCol(), getRow(), mimeData->urls().first().toLocalFile().toStdString());
+                ImageLabel::setImage();
                 //cout << "img_paths[0][0]: " << globalResources.getImagePath(0, 0) << endl;
                 //cout << "img_paths[1][0]: " << globalResources.getImagePath(1, 0) << endl;
             }
