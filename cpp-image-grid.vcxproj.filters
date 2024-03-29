@@ -57,6 +57,9 @@
     <QtMoc Include="qt-window.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="main_labels_test.cpp">
+      <Filter>Source Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global-resources.h">

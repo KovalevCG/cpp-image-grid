@@ -16,10 +16,10 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
 
     setAcceptDrops(true);
     // setStyleSheet("QLabel { border: 2px dashed gray; background-color: rgba(255, 255, 255, 0.5); }");
-    // setStyleSheet("QLabel { border: 4px dashed #aaa; background-color: rgba(255, 255, 255, 0.5); }");
+    setStyleSheet("QLabel { border: 4px dashed #aaa; background-color: rgba(255, 255, 255, 0.5); }");
     // setMinimumSize(100, 100); // Ensure the label is visible
-    setFixedSize(200, 150);
-    setScaledContents(true);
+    // setFixedSize(200, 150);
+    // setScaledContents(true);
     // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
     // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
     setAlignment(Qt::AlignCenter);
@@ -33,8 +33,8 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
 //}
 
 void ImageLabel::setImage() {
-    QString qstr_path = QString::fromStdString(GlobalResources::getImagePath(label_col, label_row));
-    QPixmap icon(qstr_path);
+    QString img_qstr_path = QString::fromStdString(GlobalResources::getImagePath(label_col, label_row));
+    QPixmap icon(img_qstr_path);
     // setScaledContents(true);
     // Scale pixmap to fill the fixed size of the label, maintaining aspect ratio without expanding.
     QPixmap scaledPixmap = icon.scaled(this->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
@@ -44,6 +44,15 @@ void ImageLabel::setImage() {
     // setPixmap(icon.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
     // setAlignment(Qt::AlignCenter);
 
+
+
+//void ImageLabel::resizeEvent(QResizeEvent* event) {
+//
+//    QLabel::resizeEvent(event);
+//    setImage(); // Update the pixmap on resize
+//
+//    std::cout << getCol() << " " << getRow() << " Updated;" << std::endl;
+//}
 
 int ImageLabel::getCol() {
     return label_col;

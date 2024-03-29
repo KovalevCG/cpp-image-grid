@@ -161,7 +161,7 @@ void DynamicQtGrid::recreateGrid() {
     bottomButtonsLayout->addWidget(hide_row_button);
 
 
-    this->window()->resize(150 * GlobalResources::num_of_cols + 180, 130 * GlobalResources::num_of_rows + 180 + 100);
+    this->window()->setFixedSize(150 * GlobalResources::num_of_cols + 180, 130 * GlobalResources::num_of_rows + 180 + 100);
 
     // Grid Size Adjustment
     /*window->resize(150 * GlobalResources::num_of_cols, 130 * GlobalResources::num_of_rows);*/

@@ -14,6 +14,8 @@ public:
 	int getCol();
 	int getRow();
 
+//protected:
+//	void resizeEvent(QResizeEvent* event) override;
 
 private:
 	int label_col;
