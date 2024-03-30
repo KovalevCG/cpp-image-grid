@@ -16,6 +16,8 @@ public:
     // Variables
     static int num_of_cols;
     static int num_of_rows;
+    static std::string bg_path_opencv;
+    static std::string bg_path_qt;
     static std::array<bool, 20> merged_cols;
     static std::array<bool, 20> merged_rows;
 

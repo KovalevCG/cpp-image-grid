@@ -23,6 +23,7 @@ private:
 	void hideRow();
 	void addRow();
 	void printLayoutChildren(QLayout* layout);
+	void showGridImages();
 	QGridLayout* gridLayout;
 
 	//private slots:

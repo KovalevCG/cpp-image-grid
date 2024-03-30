@@ -15,43 +15,33 @@ using namespace std;
 ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), label_col(col), label_row(row) {
 
     setAcceptDrops(true);
-    // setStyleSheet("QLabel { border: 2px dashed gray; background-color: rgba(255, 255, 255, 0.5); }");
-    setStyleSheet("QLabel { border: 4px dashed #aaa; background-color: rgba(255, 255, 255, 0.5); }");
-    // setMinimumSize(100, 100); // Ensure the label is visible
-    // setFixedSize(200, 150);
-    // setScaledContents(true);
-    // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Expanding);
-    // setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    setStyleSheet("QLabel { border: 4px dashed #aaa;}");
     setAlignment(Qt::AlignCenter);
-    // setText("Drop Image Here");
     setImage();
 }
 
-//void ImageLabel::setPosition(int col, int row) {
-//    label_col = col;
-//    label_row = row;
-//}
-
 void ImageLabel::setImage() {
-    QString img_qstr_path = QString::fromStdString(GlobalResources::getImagePath(label_col, label_row));
-    QPixmap icon(img_qstr_path);
-    // setScaledContents(true);
-    // Scale pixmap to fill the fixed size of the label, maintaining aspect ratio without expanding.
-    QPixmap scaledPixmap = icon.scaled(this->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
-    setPixmap(scaledPixmap);
-    // setPixmap(icon);
+    std::string path = GlobalResources::getImagePath(label_col, label_row);
+    if (path == GlobalResources::bg_path_opencv) {
+        path = GlobalResources::bg_path_qt;
+        QString img_qstr_path = QString::fromStdString(path);
+        QPixmap icon(img_qstr_path);
+        QPixmap scaledPixmap = icon.scaled(QSize(140,140), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
+    }
+    else {
+        QString img_qstr_path = QString::fromStdString(path);
+        QPixmap icon(img_qstr_path);
+        QPixmap scaledPixmap = icon.scaled(this->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation);
+        setPixmap(scaledPixmap);
+    }
 }
-    // setPixmap(icon.scaled(size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-    // setAlignment(Qt::AlignCenter);
-
-
 
 //void ImageLabel::resizeEvent(QResizeEvent* event) {
 //
 //    QLabel::resizeEvent(event);
 //    setImage(); // Update the pixmap on resize
 //
-//    std::cout << getCol() << " " << getRow() << " Updated;" << std::endl;
 //}
 
 int ImageLabel::getCol() {
@@ -112,8 +102,6 @@ void ImageLabel::dropEvent(QDropEvent* event) {
                 // setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
                 GlobalResources::setImagePath(getCol(), getRow(), mimeData->urls().first().toLocalFile().toStdString());
                 ImageLabel::setImage();
-                //cout << "img_paths[0][0]: " << globalResources.getImagePath(0, 0) << endl;
-                //cout << "img_paths[1][0]: " << globalResources.getImagePath(1, 0) << endl;
             }
         }
         event->acceptProposedAction();

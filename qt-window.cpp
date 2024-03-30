@@ -20,25 +20,21 @@ QtWindow::QtWindow(QWidget* parent) : QMainWindow(parent) {
 
     setupUi();
 
-    // globalResources.defaultFillImgPaths();
-
-    //cout << "img_paths[0][0]: " << globalResources.getImagePath(0, 0) << endl;
-    //cout << "img_paths[19][19]: " << globalResources.getImagePath(19, 19) << endl;
 }
 
 void QtWindow::setupUi() {
 
-
     // Window adjutments
     this->setWindowTitle("Image Grid");
-    // this->setFixedSize(350, 300);
-    // this->resize(150 * GlobalResources::num_of_cols + 180, 130 * GlobalResources::num_of_rows + 180 + 100);
     this->setWindowIcon(QIcon("./images/logo/Logo-V1.png"));
     this->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
     // Central Widget
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
+
+    //// Main Layout
+    QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
 
     // Menu
     QMenuBar* menuBar = this->menuBar();
@@ -48,22 +44,13 @@ void QtWindow::setupUi() {
     fileMenu->addAction("Exit", this, &QtWindow::quitApp);
 
     // Line under menuBar
-    QFrame* menu_line = new QFrame();
-    menu_line->setFrameShape(QFrame::HLine);
-    menu_line->setFrameShadow(QFrame::Sunken);
+    QFrame* menuLine = new QFrame();
+    menuLine->setFrameShape(QFrame::HLine);
+    menuLine->setFrameShadow(QFrame::Sunken);
 
-    // Image Labels
-    //ImageLabel* ilabel1 = new ImageLabel();
-    //ilabel1->setPosition(0, 0);
-    //ImageLabel* ilabel2 = new ImageLabel();
-    //ilabel2->setPosition(1, 0);
-
+    // Dynamic Grid
     DynamicQtGrid* dynamicQtGrid = new DynamicQtGrid;
-    //dynamicQtGrid->recreateGrid();
-    //QWidget* dynamicQtGrid;
-
-
-
+    // dynamicQtGrid->setSpacing
 
     // Buttons
     QPushButton* editButton = new QPushButton("Edit");
@@ -71,26 +58,15 @@ void QtWindow::setupUi() {
     QPushButton* debugButton = new QPushButton("Debug");
     connect(debugButton, &QPushButton::clicked, this, &QtWindow::onDebugButtonClicked);
 
-    // Horizontal Layout
-    //QHBoxLayout* grid_layout = new QHBoxLayout();
-    //grid_layout->addWidget(ilabel1);
-    //grid_layout->addWidget(ilabel2);
-
     // Vertical Layout
-    QVBoxLayout* main_layout = new QVBoxLayout(centralWidget);
-    main_layout->addWidget(menuBar);
-    main_layout->addWidget(menu_line);
-    //main_layout->addLayout(grid_layout);
-    main_layout->addWidget(dynamicQtGrid);
-    main_layout->addWidget(editButton);
-    main_layout->addWidget(debugButton);
+    mainLayout->addWidget(menuBar);
+    mainLayout->addWidget(menuLine);
+    mainLayout->addWidget(dynamicQtGrid);
+    mainLayout->addWidget(editButton);
+    mainLayout->addWidget(debugButton);
 
     // Set Layout
-    centralWidget->setLayout(main_layout);
-
-    //globalResources.setNumOfCols(2);
-    //globalResources.setNumOfRows(1);
-
+    centralWidget->setLayout(mainLayout);
 }
 
 void QtWindow::onEditButtonClicked() {
@@ -102,7 +78,6 @@ void QtWindow::onDebugButtonClicked() {
     std::cout << "<<<<<< Debug >>>>>>" << endl;
     cout << "img_paths[0][0]: " << GlobalResources::getImagePath(0, 0) << endl;
     cout << "img_paths[1][0]: " << GlobalResources::getImagePath(1, 0) << endl;
-
 }
 
 void QtWindow::quitApp() {

@@ -1,19 +1,20 @@
 #include "dynamic-qt-grid.h"
 #include "global-resources.h"
 #include "image-label.h"
-// #include "qt-window.h"
-// #include "id-button.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QPushButton>
 #include <QIcon>
+#include <QTimer>
 
 #include <algorithm>
 #include <iostream>
 
 DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
     gridLayout = new QGridLayout(this);
+    gridLayout->setContentsMargins(5, 5, 5, 5);
+    this->setLayout(gridLayout);
     // DynamicQtGrid::printLayoutChildren(gridLayout);
     recreateGrid();
 };
@@ -33,11 +34,10 @@ void DynamicQtGrid::recreateGrid() {
     else {
         imagesLayout = new QHBoxLayout();
     }
-
     QVBoxLayout* rightButtonsLayout = new QVBoxLayout();
-    //right_buttons_layout->setSpacing(0);
     QHBoxLayout* bottomButtonsLayout = new QHBoxLayout();
-    //bottom_buttons_layout->setSpacing(0);
+
+    gridLayout->setSpacing(5);
 
     gridLayout->addLayout(topButtonsLayout, 0, 1);
     gridLayout->addLayout(leftButtonsLayout, 1, 0);
@@ -86,6 +86,7 @@ void DynamicQtGrid::recreateGrid() {
     if (!GlobalResources::anyMergedCols()) {        // if we don't have combined columns
         for (int r = 0; r < GlobalResources::num_of_rows; r++) {
             QHBoxLayout* insideImgLayout = new QHBoxLayout();
+            // insideImgLayout->setSpacing(2);
             imagesLayout->addLayout(insideImgLayout);
             if (GlobalResources::merged_rows[r]) {      // current row merged
                 ImageLabel* i_label = new ImageLabel(0, r);
@@ -103,6 +104,7 @@ void DynamicQtGrid::recreateGrid() {
         for (int c = 0; c < GlobalResources::num_of_cols; c++) {
             QVBoxLayout* insideImgLayout = new QVBoxLayout();
             imagesLayout->addLayout(insideImgLayout);
+            // insideImgLayout->setSpacing(2);
             if (GlobalResources::merged_cols[c]) {      // current column merged
                 ImageLabel* i_label = new ImageLabel(c, 0);
                 insideImgLayout->addWidget(i_label);
@@ -116,7 +118,6 @@ void DynamicQtGrid::recreateGrid() {
         }
 
     }
-
 
     // Right Buttons Layout
     // hide column button
@@ -160,20 +161,25 @@ void DynamicQtGrid::recreateGrid() {
     bottomButtonsLayout->addWidget(add_row_button);
     bottomButtonsLayout->addWidget(hide_row_button);
 
+    this->setFixedSize(150 * (GlobalResources::num_of_cols) + 170, 120 * (GlobalResources::num_of_rows) + 150);
+    QTimer::singleShot(0, [this]() { this->window()->adjustSize(); });
+    QTimer::singleShot(0, this, &DynamicQtGrid::showGridImages);
 
-    this->window()->setFixedSize(150 * GlobalResources::num_of_cols + 180, 130 * GlobalResources::num_of_rows + 180 + 100);
-
-    // Grid Size Adjustment
-    /*window->resize(150 * GlobalResources::num_of_cols, 130 * GlobalResources::num_of_rows);*/
-
-
-        //# Using setFixedSize : (width, height)
-        //self.setFixedSize(150 * self.pyqt_num_of_cols + 180, 130 * self.pyqt_num_of_rows + 180 + 100)
-        //QtCore.QTimer.singleShot(1, lambda: self.show_grid_images())
 
     // DynamicQtGrid::printLayoutChildren(gridLayout);
 };
 
+void DynamicQtGrid::showGridImages() {
+    // Find all child ImageLabel instances
+    const auto imageLabels = findChildren<ImageLabel*>();
+
+    // Iterate through the list and set the image for each ImageLabel
+    for (ImageLabel* label : imageLabels) {
+        if (label) { // Check to make sure the pointer is valid
+            label->setImage();
+        }
+    }
+}
 
 void DynamicQtGrid::clearLayout(QLayout* layout) {
     QLayoutItem* item;
@@ -236,7 +242,7 @@ void DynamicQtGrid::addRow() {
         DynamicQtGrid::recreateGrid();
     }
 }
-// To Do: Calculate number of all elements in main window, check for memory safety
+// To Do: Calculate number of all elements in main window, check for memory safety, better representation on screen
 void DynamicQtGrid::printLayoutChildren(QLayout* layout) {
     std::cout << "----- Start of Layout Children Print ------" << "; layout->count(): " << layout->count() << std::endl;
     if (!layout) {
