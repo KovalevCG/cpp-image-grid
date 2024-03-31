@@ -20,6 +20,9 @@ int GlobalResources::num_of_rows = 2;
 std::string GlobalResources::bg_path_opencv = "images//bg_image_opencv.png";
 std::string GlobalResources::bg_path_qt = "images//bg_image_qt_white.png";
 
+// Icons
+// QIcon GlobalResources::demerge_column_icon = QIcon("images/icons/demerge-column.svg"));
+
 
 void GlobalResources::setImagePath(size_t col, size_t row, const std::string& path) {
     if (row < SIZE && col < SIZE) {

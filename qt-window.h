@@ -9,16 +9,9 @@ class QtWindow : public QMainWindow {
 
 public:
     QtWindow(QWidget* parent = nullptr);
-    // ~MainWindow() override;
-
-private slots:
-    void onEditButtonClicked();
-    void onDebugButtonClicked();
 
 private:
-    // QWidget* centralWidget;
+    void onEditButtonClicked();
     void setupUi();
     void quitApp();
-    // GlobalResources globalResources; // Add PathsManager as a member variable
-
 };

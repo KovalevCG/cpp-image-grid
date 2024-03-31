@@ -4,25 +4,26 @@
 
 #include <QLabel>
 #include <QMimeData>
+#include <QPixmap>
 
 class ImageLabel : public QLabel {
 	Q_OBJECT
 
 public:
 	explicit ImageLabel(int col, int row, QWidget* parent = nullptr);
-	// void setPosition(int col, int row);
+	// static void initStaticPixmap();
 	int getCol();
 	int getRow();
 	void setImage();
 
-//protected:
-//	void resizeEvent(QResizeEvent* event) override;
-
 private:
+	//static QPixmap bg_qt_pixmap;
+
 	int label_col;
 	int label_row;
+
+protected:
 	void dragEnterEvent(QDragEnterEvent* event) override;
 	void dropEvent(QDropEvent* event) override;
-	// GlobalResources globalResources;
 
 };

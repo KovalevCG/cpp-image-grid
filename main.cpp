@@ -2,6 +2,7 @@
 
 #include "qt-window.h"
 #include "global-resources.h"
+#include "image-label.h"
 
 #include <QApplication>
 
@@ -12,6 +13,9 @@
 
 int main(int argc, char* argv[]) {
 
+    // Qt Application
+    QApplication app(argc, argv);
+
     // Console Output
     AllocConsole();
     FILE* stream;
@@ -21,9 +25,9 @@ int main(int argc, char* argv[]) {
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();
+    // ImageLabel Init
+    // ImageLabel::initStaticPixmap();
 
-    // Qt Application
-    QApplication app(argc, argv);
     QtWindow window;
     window.show();
     return app.exec();

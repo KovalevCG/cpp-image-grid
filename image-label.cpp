@@ -1,4 +1,6 @@
 #include "image-label.h"
+#include "dynamic-qt-grid.h"
+#include "global-resources.h"
 
 #include <QDragEnterEvent>
 #include <QDropEvent>
@@ -10,6 +12,9 @@
 using namespace std;
 //#include <Windows.h>
 
+//QPixmap ImageLabel::bg_qt_pixmap;
+//ImageLabel::bg_qt_pixmap.load(QString::fromStdString(GlobalResources::bg_path_qt));
+
 
 
 ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), label_col(col), label_row(row) {
@@ -17,10 +22,22 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
     setAcceptDrops(true);
     setStyleSheet("QLabel { border: 4px dashed #aaa;}");
     setAlignment(Qt::AlignCenter);
-    setImage();
+    // setImage();
 }
 
+//
+//void ImageLabel::initStaticPixmap() {
+//    if (bg_qt_pixmap.isNull()) {
+//        QString path = QString::fromStdString(GlobalResources::bg_path_qt);
+//        bg_qt_pixmap.load(path);
+//    }
+//}
+
 void ImageLabel::setImage() {
+    //if (bg_qt_pixmap.isNull()) {
+    //QString path234 = QString::fromStdString(GlobalResources::bg_path_qt);
+    //ImageLabel::bg_qt_pixmap.load(path234);
+    //}
     std::string path = GlobalResources::getImagePath(label_col, label_row);
     if (path == GlobalResources::bg_path_opencv) {
         path = GlobalResources::bg_path_qt;

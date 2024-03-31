@@ -3,6 +3,8 @@
 #include <array>
 #include <string>
 
+#include <QIcon>
+
 class GlobalResources {
 
 public:

@@ -7,19 +7,43 @@
 #include <QPushButton>
 #include <QIcon>
 #include <QTimer>
+#include <QApplication>
 
 #include <algorithm>
 #include <iostream>
 
+//
+//  INIT
+//
 DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
+    // Main Grid Layout
     gridLayout = new QGridLayout(this);
     gridLayout->setContentsMargins(5, 5, 5, 5);
     this->setLayout(gridLayout);
+
+    // Icons
+    demerge_column_icon = QIcon("images/icons/demerge-column.svg");
+    merge_column_icon = QIcon("images/icons/merge-column.svg");
+    demerge_row_icon = QIcon("images/icons/demerge-row.svg");
+    merge_row_icon = QIcon("images/icons/merge-row.svg");
+    add_column_icon = QIcon("images/icons/add-column.svg");
+    hide_column_icon = QIcon("images/icons/hide-column.svg");
+    add_row_icon = QIcon("images/icons/add-row.svg");
+    hide_row_icon = QIcon("images/icons/hide-row.svg");
+    edit_icon = QIcon("images/icons/edit.svg");
+    monitor_1_icon = QIcon("images/monitor_1.png");
+    monitor_2_icon = QIcon("images/monitor_2.png");
+    monitor_3_icon = QIcon("images/monitor_3.png");
+
+    // bg_qt_pixmap.load(QString::fromStdString(GlobalResources::bg_path_qt));
+
     // DynamicQtGrid::printLayoutChildren(gridLayout);
     recreateGrid();
 };
 
-
+//
+//  RECREATE GRID
+//
 void DynamicQtGrid::recreateGrid() {
 
     clearLayout(gridLayout);
@@ -51,10 +75,11 @@ void DynamicQtGrid::recreateGrid() {
         QPushButton* mergeColumnButton = new QPushButton(this);
         mergeColumnButton->setToolTip("Merge column");
         if (GlobalResources::merged_cols[i]) {
-            mergeColumnButton->setIcon(QIcon("images/icons/demerge-column.svg"));
+            // mergeColumnButton->setIcon(QIcon("images/icons/demerge-column.svg"));
+            mergeColumnButton->setIcon(demerge_column_icon);
         }
         else {
-            mergeColumnButton->setIcon(QIcon("images/icons/merge-column.svg"));
+            mergeColumnButton->setIcon(merge_column_icon);
         }
         topButtonsLayout->addWidget(mergeColumnButton);
         connect(mergeColumnButton, &QPushButton::clicked, this, [this, i]() { onMergeColumnButtonClicked(i); });
@@ -67,10 +92,10 @@ void DynamicQtGrid::recreateGrid() {
         // setup button
         mergeRowButton->setToolTip("Merge row");
         if (GlobalResources::merged_rows[i]) {
-            mergeRowButton->setIcon(QIcon("images/icons/demerge-row.svg"));
+            mergeRowButton->setIcon(demerge_row_icon);
         }
         else {
-            mergeRowButton->setIcon(QIcon("images/icons/merge-row.svg"));
+            mergeRowButton->setIcon(merge_row_icon);
         }
         mergeRowButton->setFixedWidth(25);
         mergeRowButton->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -86,16 +111,13 @@ void DynamicQtGrid::recreateGrid() {
     if (!GlobalResources::anyMergedCols()) {        // if we don't have combined columns
         for (int r = 0; r < GlobalResources::num_of_rows; r++) {
             QHBoxLayout* insideImgLayout = new QHBoxLayout();
-            // insideImgLayout->setSpacing(2);
             imagesLayout->addLayout(insideImgLayout);
             if (GlobalResources::merged_rows[r]) {      // current row merged
-                ImageLabel* i_label = new ImageLabel(0, r);
-                insideImgLayout->addWidget(i_label);
+                insideImgLayout->addLayout(constructImageAndScreenshotLayout(0, r));
             }
             else {      // current row not merged
                 for (int c = 0; c < GlobalResources::num_of_cols; c++) {
-                    ImageLabel* i_label = new ImageLabel(c, r);
-                    insideImgLayout->addWidget(i_label);
+                    insideImgLayout->addLayout(constructImageAndScreenshotLayout(c, r));
                 }
             }
         }
@@ -106,13 +128,11 @@ void DynamicQtGrid::recreateGrid() {
             imagesLayout->addLayout(insideImgLayout);
             // insideImgLayout->setSpacing(2);
             if (GlobalResources::merged_cols[c]) {      // current column merged
-                ImageLabel* i_label = new ImageLabel(c, 0);
-                insideImgLayout->addWidget(i_label);
+                insideImgLayout->addLayout(constructImageAndScreenshotLayout(c, 0));
             }
             else {      // current column not merged
                 for (int r = 0; r < GlobalResources::num_of_rows; r++) {
-                    ImageLabel* i_label = new ImageLabel(c, r);
-                    insideImgLayout->addWidget(i_label);
+                    insideImgLayout->addLayout(constructImageAndScreenshotLayout(c, r));
                 }
             }
         }
@@ -123,7 +143,7 @@ void DynamicQtGrid::recreateGrid() {
     // hide column button
     QPushButton* hide_col_button = new QPushButton();
     hide_col_button->setToolTip("Remove column");
-    hide_col_button->setIcon(QIcon("images/icons/hide-column.svg"));
+    hide_col_button->setIcon(hide_column_icon);
     hide_col_button->setIconSize(QSize(20, 20));
     hide_col_button->setFixedWidth(40);
     hide_col_button->setFixedHeight(40);
@@ -132,7 +152,7 @@ void DynamicQtGrid::recreateGrid() {
     // add column button
     QPushButton* add_col_button = new QPushButton();
     add_col_button->setToolTip("Add new column");
-    add_col_button->setIcon(QIcon("images/icons/add-column.svg"));
+    add_col_button->setIcon(add_column_icon);
     add_col_button->setIconSize(QSize(20, 20));
     add_col_button->setFixedWidth(40);
     add_col_button->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -144,14 +164,14 @@ void DynamicQtGrid::recreateGrid() {
     // Bottom Button Layout
     // add row button
     QPushButton* add_row_button = new QPushButton();
-    add_row_button->setIcon(QIcon("images/icons/add-row.svg"));
+    add_row_button->setIcon(add_row_icon);
     add_row_button->setToolTip("Add new row");
     add_row_button->setIconSize(QSize(20, 20));
     add_row_button->setFixedHeight(40);
     connect(add_row_button, &QPushButton::clicked, this, &DynamicQtGrid::addRow);
     // hide row button
     QPushButton* hide_row_button = new QPushButton();
-    hide_row_button->setIcon(QIcon("images/icons/hide-row.svg"));
+    hide_row_button->setIcon(hide_row_icon);
     hide_row_button->setToolTip("Remove row");
     hide_row_button->setIconSize(QSize(20, 20));
     hide_row_button->setFixedHeight(40);
@@ -161,14 +181,71 @@ void DynamicQtGrid::recreateGrid() {
     bottomButtonsLayout->addWidget(add_row_button);
     bottomButtonsLayout->addWidget(hide_row_button);
 
-    this->setFixedSize(150 * (GlobalResources::num_of_cols) + 170, 120 * (GlobalResources::num_of_rows) + 150);
+    this->setFixedSize(140 * (GlobalResources::num_of_cols) + 170, 125 * (GlobalResources::num_of_rows) + 150);
     QTimer::singleShot(0, [this]() { this->window()->adjustSize(); });
     QTimer::singleShot(0, this, &DynamicQtGrid::showGridImages);
-
 
     // DynamicQtGrid::printLayoutChildren(gridLayout);
 };
 
+//
+//  HIDE ME FOR SCREENSHOT
+//
+void DynamicQtGrid::hideMeForScreenshot(int scrn, int c, int r) {
+    std::cout << "Screen: " << scrn << "; Column: " << c << "; Row: " << r << std::endl;
+}
+
+//
+//  CONSTRUCT IMAGE + SCREENSHOT LAYOUT
+//
+QVBoxLayout* DynamicQtGrid::constructImageAndScreenshotLayout(int c, int r) {
+
+    // Layouts
+    QVBoxLayout* layout = new QVBoxLayout();
+    layout->setSpacing(2);
+    QHBoxLayout* screenshotLayout = new QHBoxLayout();
+    screenshotLayout->setSpacing(0);
+
+    // Construct Label
+    ImageLabel* i_label = new ImageLabel(c, r);
+
+    // Construct Screenshot Buttons
+    QPushButton* screenBtn1 = new QPushButton("  Screenshot");
+    screenBtn1->setToolTip("Screenshot of the first monitor");
+    screenBtn1->setIcon(monitor_1_icon);
+
+    QPushButton* screenBtn2 = new QPushButton();
+    screenBtn2->setMaximumWidth(28);
+    screenBtn2->setToolTip("Screenshot of second monitor");
+    screenBtn2->setIcon(monitor_2_icon);
+
+    QPushButton* screenBtn3 = new QPushButton();
+    screenBtn3->setMaximumWidth(28);
+    screenBtn3->setToolTip("Screenshot of third monitor");
+    screenBtn3->setIcon(monitor_3_icon);
+
+    // Add Items to Layouts
+    screenshotLayout->addWidget(screenBtn1);
+    if (QApplication::screens().size() > 1) {
+        screenshotLayout->addWidget(screenBtn2);
+    }
+    if (QApplication::screens().size() > 2) {
+        screenshotLayout->addWidget(screenBtn3);
+    }
+    layout->addWidget(i_label);
+    layout->addLayout(screenshotLayout);
+
+    // Connect Screenshots Buttons
+    QObject::connect(screenBtn1, &QPushButton::clicked, [this, c, r]() { this->hideMeForScreenshot(0, c, r); });
+    QObject::connect(screenBtn2, &QPushButton::clicked, [this, c, r]() { this->hideMeForScreenshot(1, c, r); });
+    QObject::connect(screenBtn3, &QPushButton::clicked, [this, c, r]() { this->hideMeForScreenshot(2, c, r); });
+
+    return layout;
+}
+
+//
+//  SHOW GRID IMAGES
+//
 void DynamicQtGrid::showGridImages() {
     // Find all child ImageLabel instances
     const auto imageLabels = findChildren<ImageLabel*>();
@@ -181,6 +258,9 @@ void DynamicQtGrid::showGridImages() {
     }
 }
 
+//
+//  CLEAR LAYOUT
+//
 void DynamicQtGrid::clearLayout(QLayout* layout) {
     QLayoutItem* item;
     while ((item = layout->takeAt(0)) != nullptr) {
@@ -195,15 +275,15 @@ void DynamicQtGrid::clearLayout(QLayout* layout) {
     }
 }
 
-
+//
+// ON MERGE BUTTON CLICKED
+//
 void DynamicQtGrid::onMergeColumnButtonClicked(int i) {
     GlobalResources::merged_cols[i] = !GlobalResources::merged_cols[i];
     // Fill all rows with "false"
     std::fill(GlobalResources::merged_rows.begin(), GlobalResources::merged_rows.end(), false);
     DynamicQtGrid::recreateGrid();
 }
-
-
 void DynamicQtGrid::onMergeRowButtonClicked(int i) {
     GlobalResources::merged_rows[i] = !GlobalResources::merged_rows[i];
     // Fill all colls with "false"
@@ -211,6 +291,9 @@ void DynamicQtGrid::onMergeRowButtonClicked(int i) {
     DynamicQtGrid::recreateGrid();
 }
 
+//
+//  ADD/HIDE COLUMN/ROW
+//
 void DynamicQtGrid::hideColumn() {
     if (GlobalResources::num_of_cols > 1) {
         GlobalResources::num_of_cols--;
@@ -218,7 +301,6 @@ void DynamicQtGrid::hideColumn() {
         DynamicQtGrid::recreateGrid();
     }
 }
-
 void DynamicQtGrid::addColumn() {
     if (GlobalResources::num_of_cols < 20) {
         GlobalResources::num_of_cols++;
@@ -226,7 +308,6 @@ void DynamicQtGrid::addColumn() {
         DynamicQtGrid::recreateGrid();
     }
 }
-
 void DynamicQtGrid::hideRow() {
     if (GlobalResources::num_of_rows > 1) {
         GlobalResources::num_of_rows--;
@@ -234,7 +315,6 @@ void DynamicQtGrid::hideRow() {
         DynamicQtGrid::recreateGrid();
     }
 }
-
 void DynamicQtGrid::addRow() {
     if (GlobalResources::num_of_rows < 20) {
         GlobalResources::num_of_rows++;
@@ -242,7 +322,10 @@ void DynamicQtGrid::addRow() {
         DynamicQtGrid::recreateGrid();
     }
 }
-// To Do: Calculate number of all elements in main window, check for memory safety, better representation on screen
+
+//
+//  PRINT LAYOUT CHILDREN       To Do: Calculate number of all elements in main window, check for memory safety, better representation on screen
+//
 void DynamicQtGrid::printLayoutChildren(QLayout* layout) {
     std::cout << "----- Start of Layout Children Print ------" << "; layout->count(): " << layout->count() << std::endl;
     if (!layout) {

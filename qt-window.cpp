@@ -50,20 +50,29 @@ void QtWindow::setupUi() {
 
     // Dynamic Grid
     DynamicQtGrid* dynamicQtGrid = new DynamicQtGrid;
-    // dynamicQtGrid->setSpacing
+
+    // Line under menuBar
+    QFrame* editLine = new QFrame();
+    editLine->setFrameShape(QFrame::HLine);
+    editLine->setFrameShadow(QFrame::Sunken);
 
     // Buttons
     QPushButton* editButton = new QPushButton("Edit");
+    editButton->setFixedHeight(50);
+    editButton->setIcon(QIcon("images/icons/edit.svg"));
+    editButton->setIconSize(QSize(20, 20));
+    editButton->setToolTip("Open Editor");
     connect(editButton, &QPushButton::clicked, this, &QtWindow::onEditButtonClicked);
-    QPushButton* debugButton = new QPushButton("Debug");
-    connect(debugButton, &QPushButton::clicked, this, &QtWindow::onDebugButtonClicked);
+    //QPushButton* debugButton = new QPushButton("Debug");
+    //connect(debugButton, &QPushButton::clicked, this, &QtWindow::onDebugButtonClicked);
 
     // Vertical Layout
     mainLayout->addWidget(menuBar);
     mainLayout->addWidget(menuLine);
     mainLayout->addWidget(dynamicQtGrid);
+    mainLayout->addWidget(editLine);
     mainLayout->addWidget(editButton);
-    mainLayout->addWidget(debugButton);
+    // mainLayout->addWidget(debugButton);
 
     // Set Layout
     centralWidget->setLayout(mainLayout);
@@ -74,11 +83,11 @@ void QtWindow::onEditButtonClicked() {
     opencv.displayOpenCVWindow();
 }
 
-void QtWindow::onDebugButtonClicked() {
-    std::cout << "<<<<<< Debug >>>>>>" << endl;
-    cout << "img_paths[0][0]: " << GlobalResources::getImagePath(0, 0) << endl;
-    cout << "img_paths[1][0]: " << GlobalResources::getImagePath(1, 0) << endl;
-}
+//void QtWindow::onDebugButtonClicked() {
+//    std::cout << "<<<<<< Debug >>>>>>" << endl;
+//    cout << "img_paths[0][0]: " << GlobalResources::getImagePath(0, 0) << endl;
+//    cout << "img_paths[1][0]: " << GlobalResources::getImagePath(1, 0) << endl;
+//}
 
 void QtWindow::quitApp() {
     QCoreApplication::quit();
