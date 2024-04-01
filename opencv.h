@@ -5,5 +5,4 @@ class OpenCV {
 public:
     void displayOpenCVWindow();
 private:
-    // GlobalResources globalResources;
 };

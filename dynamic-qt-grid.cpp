@@ -1,6 +1,7 @@
 #include "dynamic-qt-grid.h"
 #include "global-resources.h"
 #include "image-label.h"
+#include "qt-window.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -35,9 +36,6 @@ DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
     monitor_2_icon = QIcon("images/monitor_2.png");
     monitor_3_icon = QIcon("images/monitor_3.png");
 
-    // bg_qt_pixmap.load(QString::fromStdString(GlobalResources::bg_path_qt));
-
-    // DynamicQtGrid::printLayoutChildren(gridLayout);
     recreateGrid();
 };
 
@@ -182,10 +180,12 @@ void DynamicQtGrid::recreateGrid() {
     bottomButtonsLayout->addWidget(hide_row_button);
 
     this->setFixedSize(140 * (GlobalResources::num_of_cols) + 170, 125 * (GlobalResources::num_of_rows) + 150);
-    QTimer::singleShot(0, [this]() { this->window()->adjustSize(); });
-    QTimer::singleShot(0, this, &DynamicQtGrid::showGridImages);
 
-    // DynamicQtGrid::printLayoutChildren(gridLayout);
+    QTimer::singleShot(0, [this]() { 
+    this->showGridImages();
+    this->window()->adjustSize();
+    this->window()->setFixedSize(this->window()->size()); 
+    });
 };
 
 //

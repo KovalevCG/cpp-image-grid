@@ -5,6 +5,7 @@
 #include "image-label.h"
 
 #include <QApplication>
+#include <crtdbg.h>
 
 // Console Output
 #include <fstream>
@@ -25,8 +26,6 @@ int main(int argc, char* argv[]) {
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();
-    // ImageLabel Init
-    // ImageLabel::initStaticPixmap();
 
     QtWindow window;
     window.show();

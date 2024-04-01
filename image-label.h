@@ -11,13 +11,11 @@ class ImageLabel : public QLabel {
 
 public:
 	explicit ImageLabel(int col, int row, QWidget* parent = nullptr);
-	// static void initStaticPixmap();
 	int getCol();
 	int getRow();
 	void setImage();
 
 private:
-	//static QPixmap bg_qt_pixmap;
 
 	int label_col;
 	int label_row;

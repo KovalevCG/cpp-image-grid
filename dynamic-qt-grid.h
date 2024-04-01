@@ -13,8 +13,6 @@ public:
 	explicit DynamicQtGrid(QWidget* parent = nullptr);
 	void recreateGrid();
 
-	// QPixmap bg_qt_pixmap;
-
 private:
 	void clearLayout(QLayout* layout);
 	void onMergeColumnButtonClicked(int i);
