@@ -3,8 +3,6 @@
 #include "global-resources.h"
 
 #include <QLabel>
-#include <QMimeData>
-#include <QPixmap>
 
 class ImageLabel : public QLabel {
 	Q_OBJECT

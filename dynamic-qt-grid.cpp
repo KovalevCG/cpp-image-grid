@@ -1,7 +1,6 @@
 #include "dynamic-qt-grid.h"
 #include "global-resources.h"
 #include "image-label.h"
-#include "qt-window.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -10,7 +9,6 @@
 #include <QTimer>
 #include <QApplication>
 
-#include <algorithm>
 #include <iostream>
 
 //

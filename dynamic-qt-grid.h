@@ -1,7 +1,5 @@
 #pragma once
 
-#include "global-resources.h"
-
 #include <QWidget>
 #include <QGridLayout>
 

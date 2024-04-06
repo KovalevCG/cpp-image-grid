@@ -2,10 +2,8 @@
 
 #include "qt-window.h"
 #include "global-resources.h"
-#include "image-label.h"
 
 #include <QApplication>
-#include <crtdbg.h>
 
 // Console Output
 #include <fstream>

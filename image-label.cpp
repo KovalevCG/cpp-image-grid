@@ -1,15 +1,9 @@
 #include "image-label.h"
-#include "dynamic-qt-grid.h"
-#include "global-resources.h"
 
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QMimeData>
-#include <QImage>
 #include <QPixmap>
-
-#include <iostream>
-using namespace std;
 
 
 ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), label_col(col), label_row(row) {
@@ -17,7 +11,6 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
     setAcceptDrops(true);
     setStyleSheet("QLabel { border: 4px dashed #aaa;}");
     setAlignment(Qt::AlignCenter);
-
 }
 
 void ImageLabel::setImage() {
@@ -49,7 +42,6 @@ void ImageLabel::dragEnterEvent(QDragEnterEvent* event) {
     if (event->mimeData()->hasImage()) {
         // I should remove this later
         event->acceptProposedAction();
-
     }
     else if (event->mimeData()->hasUrls()) {
         event->acceptProposedAction();
@@ -77,7 +69,6 @@ void ImageLabel::dropEvent(QDropEvent* event) {
         //self.assignImagePath(self.objectName(), file_path)
         //event.accept()
         //update_ocv_images = True
-
 
         auto urls = mimeData->urls();
         if (!urls.isEmpty()) {

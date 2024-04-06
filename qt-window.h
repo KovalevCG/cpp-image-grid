@@ -2,7 +2,6 @@
 
 #include <QMainWindow>
 #include <QPushButton>
-#include "global-resources.h"
 
 class QtWindow : public QMainWindow {
     Q_OBJECT
