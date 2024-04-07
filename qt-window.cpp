@@ -1,20 +1,17 @@
 #include "qt-window.h"
 #include "opencv.h"
-// #include "image-label.h"
 #include "dynamic-qt-grid.h"
 
-#include <QRect>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include <QMenuBar>
-#include <QCoreApplication>
 #include <QApplication>
 #include <QFrame>
-#include <QStyleFactory>
 
 #include <iostream>
 using namespace std;
 
+OpenCV opencv;
 
 QtWindow::QtWindow(QWidget* parent) : QMainWindow(parent) {
 
@@ -33,7 +30,7 @@ void QtWindow::setupUi() {
     QWidget* centralWidget = new QWidget(this);
     setCentralWidget(centralWidget);
 
-    //// Main Layout
+    // Main Layout
     QVBoxLayout* mainLayout = new QVBoxLayout(centralWidget);
 
     // Menu
@@ -63,8 +60,6 @@ void QtWindow::setupUi() {
     editButton->setIconSize(QSize(20, 20));
     editButton->setToolTip("Open Editor");
     connect(editButton, &QPushButton::clicked, this, &QtWindow::onEditButtonClicked);
-    //QPushButton* debugButton = new QPushButton("Debug");
-    //connect(debugButton, &QPushButton::clicked, this, &QtWindow::onDebugButtonClicked);
 
     // Vertical Layout
     mainLayout->addWidget(menuBar);
@@ -72,22 +67,14 @@ void QtWindow::setupUi() {
     mainLayout->addWidget(dynamicQtGrid);
     mainLayout->addWidget(editLine);
     mainLayout->addWidget(editButton);
-    // mainLayout->addWidget(debugButton);
 
     // Set Layout
     centralWidget->setLayout(mainLayout);
 }
 
 void QtWindow::onEditButtonClicked() {
-    OpenCV opencv;
-    opencv.displayOpenCVWindow();
+    opencv.opencvMainLoop();
 }
-
-//void QtWindow::onDebugButtonClicked() {
-//    std::cout << "<<<<<< Debug >>>>>>" << endl;
-//    cout << "img_paths[0][0]: " << GlobalResources::getImagePath(0, 0) << endl;
-//    cout << "img_paths[1][0]: " << GlobalResources::getImagePath(1, 0) << endl;
-//}
 
 void QtWindow::quitApp() {
     QCoreApplication::quit();
