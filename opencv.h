@@ -12,6 +12,7 @@ public:
     void opencvMainLoop();
 
 private:
+    static constexpr int SIZE = 20;
 
     void opencvReadImages();
 
@@ -19,4 +20,5 @@ private:
     bool update_ocv_images;
     cv::Scalar highlight_color;
 
+    std::array<std::array<cv::Mat, SIZE>, SIZE> images;
 };

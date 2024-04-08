@@ -42,4 +42,10 @@ void OpenCV::opencvMainLoop() {
 }
 
 void OpenCV::opencvReadImages() {
+    // Load images based on paths in GlobalResources
+    for (size_t row = 0; row < GlobalResources::num_of_rows; ++row) {
+        for (size_t col = 0; col < GlobalResources::num_of_cols; ++col) {
+            images[row][col] = cv::imread(GlobalResources::getImagePath(col, row), cv::IMREAD_COLOR);
+        }
+    }
 }
