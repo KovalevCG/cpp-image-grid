@@ -278,12 +278,14 @@ void DynamicQtGrid::clearLayout(QLayout* layout) {
 //
 void DynamicQtGrid::onMergeColumnButtonClicked(int i) {
     GlobalResources::merged_cols[i] = !GlobalResources::merged_cols[i];
+    std::cout << "merged col number: " << i << std::endl;
     // Fill all rows with "false"
     std::fill(GlobalResources::merged_rows.begin(), GlobalResources::merged_rows.end(), false);
     DynamicQtGrid::recreateGrid();
 }
 void DynamicQtGrid::onMergeRowButtonClicked(int i) {
     GlobalResources::merged_rows[i] = !GlobalResources::merged_rows[i];
+    std::cout << "merged row number: " << i << std::endl;
     // Fill all colls with "false"
     std::fill(GlobalResources::merged_cols.begin(), GlobalResources::merged_cols.end(), false);
     DynamicQtGrid::recreateGrid();

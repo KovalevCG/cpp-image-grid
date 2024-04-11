@@ -73,7 +73,7 @@ void QtWindow::setupUi() {
 }
 
 void QtWindow::onEditButtonClicked() {
-    opencv.opencvMainLoop();
+    opencv.startOpencvMainLoop();
 }
 
 void QtWindow::quitApp() {

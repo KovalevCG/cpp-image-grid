@@ -5,6 +5,8 @@
 #include <QMimeData>
 #include <QPixmap>
 
+#include <iostream>
+
 
 ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), label_col(col), label_row(row) {
 
@@ -15,6 +17,7 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
 
 void ImageLabel::setImage() {
     std::string path = GlobalResources::getImagePath(label_col, label_row);
+    // std::cout << "Column: " << label_col << "; Row: " << label_row << std::endl;
     if (path == GlobalResources::bg_path_opencv) {
         path = GlobalResources::bg_path_qt;
         QString img_qstr_path = QString::fromStdString(path);
