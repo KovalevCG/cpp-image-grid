@@ -18,10 +18,14 @@ private:
 
     void opencvReadImages();
     void setTotalSizes();
+    static void onMouse(int event, int x, int y, int flags, void* userdata);
     cv::Mat createImage(int col, int row, std::string combined = "none", bool resize = true);
+    void mousePosition(int x, int y);
 
     bool close_ocv = false;
     bool update_ocv_images = true;
+    bool resize = false;
+    bool move = false;
 
     cv::Scalar highlight_color = cv::Scalar(220, 220, 0);
     std::array<std::array<cv::Mat, SIZE>, SIZE> images;
@@ -30,6 +34,7 @@ private:
     std::array<std::array<double, SIZE>, SIZE> zoom { };
     std::array<std::array<int, SIZE>, SIZE> tr_x { };
     std::array<std::array<int, SIZE>, SIZE> tr_y { };
+    std::array<int, 2> mouse_on_cell { };
     // std::array<bool, 20> merged_cols { };
     // std::array<bool, 20> merged_rows { };
 
@@ -41,5 +46,11 @@ private:
     int height_total = 0;
     int initial_cell_width = 0;
     int initial_cell_height = 0;
+
+    int start_x = 0;
+    int start_y = 0;
+
+    std::string mouse_on_type = "none";
+    int mouse_on_num = 0;
 
 };
