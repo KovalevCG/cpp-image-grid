@@ -173,6 +173,8 @@ void OpenCV::startOpencvMainLoop() {
             close_ocv = true;
         }
 
+        // cout << "Zoom: " << zoom[0][0] << "; " << zoom[1][0] << "; " << zoom[0][1] << "; " << zoom[1][1] << "; " << endl;
+
     }
     cv::destroyAllWindows();
 }
@@ -191,78 +193,77 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
 
 
     switch (event) {
-    case cv::EVENT_LBUTTONDOWN:
-        // std::cout << "LMB Down" << std::endl;
-        // self->mousePosition(x, y);
-        // cout << "Type: " << self->mouse_on_type << "; Num: " << self->mouse_on_num << endl;
-        // cout << "mouse_on_cell COL: " << self->mouse_on_cell[0] << "; mouse_on_cell ROW : " << self->mouse_on_cell[1] << endl;
-        if (self->mouse_on_type == "cell") {
-            self->move = true;
 
-            self->start_x = x - self->tr_x[c][r];
-            self->start_y = y - self->tr_y[c][r];
-        }
-        else if (self->mouse_on_type == "save_button") {
-            // Trigger save file dialog
-            // self->saveFileDialog();
-        }
-        else {
-            self->resize = true;
-        }
-        break;
+        case cv::EVENT_LBUTTONDOWN:
+            if (self->mouse_on_type == "cell") {
+                self->move = true;
+                self->start_x = x - self->tr_x[c][r];
+                self->start_y = y - self->tr_y[c][r];
+            }
+            else if (self->mouse_on_type == "save_button") {
+                cout << "SAVE" << endl;
+                // Trigger save file dialog
+                // self->saveFileDialog();
+            }
+            else {
+                self->resize = true;
+                cout << "RESIZE START" << endl;
+            }
+            break;
 
-    case cv::EVENT_LBUTTONUP:
-        self->move = false;
-        self->resize = false;
-        break;
-    case cv::EVENT_MOUSEMOVE:
-        if (self->move) {
-            int c = self->mouse_on_cell[0];
-            int r = self->mouse_on_cell[1];
-            self->tr_x[c][r] = x - self->start_x;
-            //if (self->tr_x[c][r] >= self->images[c][r].cols) {
-            //    self->tr_x[c][r] = self->images[c][r].cols - 5;
+        case cv::EVENT_LBUTTONUP:
+            self->move = false;
+            self->resize = false;
+            cout << "STOP" << endl;
+            break;
+
+        case cv::EVENT_MOUSEMOVE:
+            if (self->move) {
+                self->tr_x[c][r] = x - self->start_x;
+                self->tr_y[c][r] = y - self->start_y;
+            }
+            //if (self->resize) {
+            //    if (self->mouse_on_type == "border_v") {
+            //        auto delta = int((x - self->width_total) / self->num_of_cols);
+            //        self->adjustWidths(delta, flags & cv::EVENT_FLAG_SHIFTKEY);
+            //    }
+            //    else if (self->mouse_on_type == "border_h") {
+            //        auto delta = int((y - self->height_total) / self->num_of_rows);
+            //        self->adjustHeights(delta);
+            //    }
             //}
-            self->tr_y[c][r] = y - self->start_y;
-        }
-        //if (self->resize) {
-        //    if (self->mouse_on_type == "border_v") {
-        //        auto delta = int((x - self->width_total) / self->num_of_cols);
-        //        self->adjustWidths(delta, flags & cv::EVENT_FLAG_SHIFTKEY);
-        //    }
-        //    else if (self->mouse_on_type == "border_h") {
-        //        auto delta = int((y - self->height_total) / self->num_of_rows);
-        //        self->adjustHeights(delta);
-        //    }
-        //}
-        break;
-    case cv::EVENT_MOUSEWHEEL:
-        cout << "scroll flags: " << flags << "  zoom: " << self->zoom[0][0] <<endl;
-        if (flags == 7864336) {  // Zoom up all
-            cout << "UP ALL" << endl;
-            for (auto& row : self->zoom) {
-                for (auto& z : row) {
-                    z *= 1.1;
+            break;
+
+        case cv::EVENT_MOUSEWHEEL:
+            if (flags == 7864336) {  // Zoom up all
+                for (auto& row : self->zoom) {
+                    for (auto& z : row) {
+                        if (z < 50) {
+                            z *= 1.1;
+                        }
+                    }
                 }
             }
-        }
-        else if (flags == -7864304) {  // Zoom down all
-            cout << "DOWN ALL" << endl;
-            for (auto& row : self->zoom) {
-                for (auto& z : row) {
-                    z /= 1.1;
+            else if (flags == -7864304) {  // Zoom down all
+                for (auto& row : self->zoom) {
+                    for (auto& z : row) {
+                        if (z > 0.03) {
+                            z /= 1.1;
+                        }
+                    }
                 }
             }
-        }
-        if (flags == 7864320) {  // Zoom up current
-            cout << "UP CURRENT" << endl;
-            self->zoom[c][r] *= 1.1;
-        }
-        else if (flags == -7864320) {  // Zoom down current
-            cout << "DOWN CURRENT" << endl;
-            self->zoom[c][r] /= 1.1;
-        }
-        break;
+            if (flags == 7864320) {  // Zoom up current
+                if (self->zoom[c][r] < 50) {
+                    self->zoom[c][r] *= 1.1;
+                }
+            }
+            else if (flags == -7864320) {  // Zoom down current
+                if (self->zoom[c][r] > 0.03) {
+                    self->zoom[c][r] /= 1.1;
+                }
+            }
+            break;
     }
 }
 
@@ -394,6 +395,7 @@ void OpenCV::setTotalSizes() {
 cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize) {
 
     resize = true;
+    int delta = 0;
     // Local Variables for borders
     int border_top = 0, border_bottom = 0;
     int border_left = 0, border_right = 0;
@@ -427,11 +429,24 @@ cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize)
 
     // If image out of opencv cell -> move image back, at least 1 pixel should be visible
     if (crop_x_end < 1) {
-        int delta = 1 - crop_x_end;
-        // cout << "delta" << delta << "crop_x_start" << crop_x_start << "crop_x_end" << crop_x_end << endl;
+        delta = 1 - crop_x_end;
         crop_x_start += delta;
         crop_x_end += delta;
-        // cout << "delta" << delta << "crop_x_start" << crop_x_start << "crop_x_end" << crop_x_end << endl;
+    }
+    if (crop_y_end < 1) {
+        delta = 1 - crop_y_end;
+        crop_y_start += delta;
+        crop_y_end += delta;
+    }
+    if ( crop_x_start > ( x - 1 )) {
+        delta = crop_x_start - (x - 1);
+        crop_x_start -= delta;
+        crop_x_end -= delta;
+    }
+    if (crop_y_start > (y - 1)) {
+        delta = crop_y_start - (y - 1);
+        crop_y_start -= delta;
+        crop_y_end -= delta;
     }
 
     // Region to crop on image (without negative values)
@@ -455,11 +470,11 @@ cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize)
     // Resize the image if needed
     if (resize) {
         cv::Size target_size;
-        if (combined == "rows") {
-            target_size = cv::Size(width_total, cell_heights[row]);
+        if (combined == "row") {
+            target_size = cv::Size(width_total_no_borders, cell_heights[row]);
         }
-        else if (combined == "columns") {
-            target_size = cv::Size(cell_widths[col], height_total);
+        else if (combined == "col") {
+            target_size = cv::Size(cell_widths[col], height_total_no_borders);
         }
         else {
             target_size = cv::Size(cell_widths[col], cell_heights[row]);
