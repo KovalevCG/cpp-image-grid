@@ -6,8 +6,6 @@
 using std::cout;
 using std::endl;
 
-
-
 // Constructor
 OpenCV::OpenCV() {
 
@@ -16,6 +14,7 @@ OpenCV::OpenCV() {
     }
 }
 
+// Main Loop
 void OpenCV::startOpencvMainLoop() {
 
     bool close_ocv = false;
@@ -179,9 +178,9 @@ void OpenCV::startOpencvMainLoop() {
     cv::destroyAllWindows();
 }
 
-
 void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
     OpenCV* self = static_cast<OpenCV*>(userdata);
+
     int c;
     int r;
 
@@ -190,7 +189,6 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
         c = self->mouse_on_cell[0];
         r = self->mouse_on_cell[1];
     }
-
 
     switch (event) {
 
@@ -219,23 +217,32 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
 
         case cv::EVENT_MOUSEMOVE:
             if (self->move) {
+                cout << "mousemove && move" << endl;
                 self->tr_x[c][r] = x - self->start_x;
                 self->tr_y[c][r] = y - self->start_y;
             }
-            //if (self->resize) {
-            //    if (self->mouse_on_type == "border_v") {
-            //        auto delta = int((x - self->width_total) / self->num_of_cols);
-            //        self->adjustWidths(delta, flags & cv::EVENT_FLAG_SHIFTKEY);
-            //    }
-            //    else if (self->mouse_on_type == "border_h") {
-            //        auto delta = int((y - self->height_total) / self->num_of_rows);
-            //        self->adjustHeights(delta);
-            //    }
-            //}
+            if (self->resize) {
+                // Resize Vertical Border
+                if (self->mouse_on_type == "border_v") {
+                    // self->border_time = std::chrono::system_clock::now();
+                    int delta = int((x - self->width_total) / self->num_of_cols);
+                    for (int i = 0; i < self->cell_widths.size(); ++i) {
+                        int new_width = self->cell_widths[i] + delta;
+                        if (new_width > 40) { // Ensure the new width is above the minimum
+                            self->cell_widths[i] = new_width;
+                        }
+                    }
+                    self->setTotalSizes();
+                }
+            }
             break;
 
         case cv::EVENT_MOUSEWHEEL:
-            if (flags == 7864336) {  // Zoom up all
+            switch (flags) {
+            case 7864336: ///7864320
+            case 15728656:
+            case 23592976:
+            case 31457296:
                 for (auto& row : self->zoom) {
                     for (auto& z : row) {
                         if (z < 50) {
@@ -243,8 +250,11 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                         }
                     }
                 }
-            }
-            else if (flags == -7864304) {  // Zoom down all
+                break;
+            case -7864304:
+            case -15728624:
+            case -23592944:
+            case -31457264:
                 for (auto& row : self->zoom) {
                     for (auto& z : row) {
                         if (z > 0.03) {
@@ -252,21 +262,32 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                         }
                     }
                 }
-            }
-            if (flags == 7864320) {  // Zoom up current
+                break;
+            case 7864320:
+            case 15728640:
+            case 23592960:
+            case 31457280:
+            case 39321600:
                 if (self->zoom[c][r] < 50) {
                     self->zoom[c][r] *= 1.1;
                 }
-            }
-            else if (flags == -7864320) {  // Zoom down current
+                break;
+            case -7864320:
+            case -15728640:
+            case -23592960:
+            case -31457280:
+            case -39321600:
                 if (self->zoom[c][r] > 0.03) {
                     self->zoom[c][r] /= 1.1;
                 }
+                break;
+            default:
+                // cout << "flags:" << flags << endl;
+                break;
             }
-            break;
+
     }
 }
-
 
 void OpenCV::mousePosition(int x, int y) {
     // Save Button
@@ -276,7 +297,7 @@ void OpenCV::mousePosition(int x, int y) {
     }
     // Right Border
     if (x > width_total - 9) {
-        // border_time = std::chrono::system_clock::now();
+        border_time = std::chrono::system_clock::now();
         mouse_on_type = "border_v";
         mouse_on_num = num_of_cols - 1;
         return;
@@ -394,7 +415,7 @@ void OpenCV::setTotalSizes() {
 
 cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize) {
 
-    resize = true;
+    // resize = true;
     int delta = 0;
     // Local Variables for borders
     int border_top = 0, border_bottom = 0;

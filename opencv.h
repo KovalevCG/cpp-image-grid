@@ -35,8 +35,6 @@ private:
     std::array<std::array<int, SIZE>, SIZE> tr_x { };
     std::array<std::array<int, SIZE>, SIZE> tr_y { };
     std::array<int, 2> mouse_on_cell { };
-    // std::array<bool, 20> merged_cols { };
-    // std::array<bool, 20> merged_rows { };
 
     int num_of_cols = 0;
     int num_of_rows = 0;
@@ -52,5 +50,7 @@ private:
 
     std::string mouse_on_type = "none";
     int mouse_on_num = 0;
+
+    std::chrono::time_point<std::chrono::system_clock> border_time;
 
 };
