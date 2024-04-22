@@ -7,6 +7,8 @@
 
 #include <array>
 
+// #include <QThread>
+
 class OpenCV {
 
 public:
@@ -26,6 +28,8 @@ private:
     bool update_ocv_images = true;
     bool resize = false;
     bool move = false;
+    // bool shift_pressed = false;     // Perhaps unnecessary
+
 
     cv::Scalar highlight_color = cv::Scalar(220, 220, 0);
     std::array<std::array<cv::Mat, SIZE>, SIZE> images;
@@ -44,6 +48,8 @@ private:
     int height_total = 0;
     int initial_cell_width = 0;
     int initial_cell_height = 0;
+    unsigned int resize_inc_left = 0;
+    unsigned int resize_inc_right = 0;
 
     int start_x = 0;
     int start_y = 0;

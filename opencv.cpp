@@ -12,6 +12,7 @@ OpenCV::OpenCV() {
     for (auto& row : zoom) { // Initialize all elements to 1.0
         row.fill(1.0);
     }
+
 }
 
 // Main Loop
@@ -20,7 +21,8 @@ void OpenCV::startOpencvMainLoop() {
     bool close_ocv = false;
     bool update_ocv_images = true;
 
-    cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE);
+    // cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE);
+    cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE | cv::WINDOW_GUI_NORMAL);
     cv::moveWindow("Edit", 50, 50);
     cv::setMouseCallback("Edit", onMouse, this);
 
@@ -43,9 +45,6 @@ void OpenCV::startOpencvMainLoop() {
     // Calculate width_total and height_total
     setTotalSizes();
 
-    // this->merged_cols = GlobalResources::merged_cols;
-    // this->merged_rows = GlobalResources::merged_rows;
-
     // Save As Button
     // ---------------
 
@@ -65,8 +64,8 @@ void OpenCV::startOpencvMainLoop() {
 
         if (!GlobalResources::anyMergedCols()) {
             cv::Mat border_w = cv::Mat::zeros(1, width_total, CV_8UC3);
-            // cv::Mat border_w_highlighted = border_w.clone();
-            // border_w_highlighted.setTo(highlight_color);
+            cv::Mat border_w_highlighted = border_w.clone();
+            border_w_highlighted.setTo(highlight_color);
             stack = border_w.clone();
             for (int r = 0; r < num_of_rows; ++r) {
                 cv::Mat stack_r;
@@ -77,43 +76,41 @@ void OpenCV::startOpencvMainLoop() {
                      stack_r = cv::Mat::zeros(cell_heights[r], 1, CV_8UC3);
                      cv::hconcat(stack_r, img_edit, stack_r);
                      cv::hconcat(stack_r, border_h, stack_r);
+
                 }
                 else {
                     stack_r = cv::Mat::zeros(cell_heights[r], 1, CV_8UC3);
                     for (int c = 0; c < num_of_cols; ++c) {
-                        cv::Mat img_edit = createImage(c, r); // As above
+                        cv::Mat img_edit = createImage(c, r);
                         cv::Mat border_h = cv::Mat::zeros(img_edit.rows, 1, CV_8UC3);
-                        //cv::Mat border_h_highlighted = border_h.clone();
-                        //border_h_highlighted.setTo(highlight_color);
+                        cv::Mat border_h_highlighted = border_h.clone();
+                        border_h_highlighted.setTo(highlight_color);
 
-                        //if (mouseOnType == "grid_v" && mouseOnNum == col) {
-                        //    cv::hconcat(stack_r, img_edit, stack_r); // Append horizontally
-                        //    cv::hconcat(stack_r, border_h_highlighted, stack_r);
-                        //}
-                        /*else {*/
-                        // cv::hconcat(stack_r, border_h, stack_r);
-                        cv::hconcat(stack_r, img_edit, stack_r);
-                        cv::hconcat(stack_r, border_h, stack_r);
-                        /*}*/
+                        if (mouse_on_type == "grid_v" && mouse_on_num == c) {
+                            cv::hconcat(stack_r, img_edit, stack_r);
+                            cv::hconcat(stack_r, border_h_highlighted, stack_r);
+                        }
+                        else {
+                            cv::hconcat(stack_r, img_edit, stack_r);
+                            cv::hconcat(stack_r, border_h, stack_r);
+                        }
                     }
                 }
                 
-                //if (mouseOnType == "grid_h" && mouseOnNum == row) {
-                //    cv::vconcat(stack, stack_r, stack); // Append vertically
-                //    cv::vconcat(stack, border_w_highlighted, stack);
-                //}
-                //else {
-
-                cv::vconcat(stack, stack_r, stack);
-                cv::vconcat(stack, border_w, stack);
-                
-                //}
+                if ((mouse_on_type == "grid_h") && (mouse_on_num == r)) {
+                    cv::vconcat(stack, stack_r, stack);
+                    cv::vconcat(stack, border_w_highlighted, stack);
+                }
+                else {
+                    cv::vconcat(stack, stack_r, stack);
+                    cv::vconcat(stack, border_w, stack);
+                }
             }
 
         } else {    // "else" - we have at least one combined column
             cv::Mat border_h = cv::Mat::zeros(height_total, 1, CV_8UC3);
-            // cv::Mat border_h_highlighted = border_h.clone();
-            // border_h_highlighted.setTo(highlight_color);
+            cv::Mat border_h_highlighted = border_h.clone();
+            border_h_highlighted.setTo(highlight_color);
             stack = border_h.clone();
             for (int c = 0; c < num_of_cols; ++c) {
                 cv::Mat stack_c;
@@ -121,48 +118,51 @@ void OpenCV::startOpencvMainLoop() {
                     cv::Mat img_edit = createImage(c, 0, "col");
                     cv::Mat border_w = cv::Mat::zeros(1, cell_widths[c], CV_8UC3);
                     stack_c = cv::Mat::zeros(1, cell_widths[c], CV_8UC3);
-                    // std::cout << "stack_c x: " << stack_c.cols << "; stack_c y: " << stack_c.rows << std::endl;
-                    // std::cout << "img_edit x: " << img_edit.cols << "; img_edit y: " << img_edit.rows << std::endl;
-                    
+
                     cv::vconcat(stack_c, img_edit, stack_c);
                     cv::vconcat(stack_c, border_w, stack_c);
                 }
                 else {
                     cv::Mat border_w = cv::Mat::zeros(1, cell_widths[c], CV_8UC3);
-                    //cv::Mat border_w_highlighted = border_w.clone();
-                    //border_w_highlighted.setTo(highlight_color);
+                    cv::Mat border_w_highlighted = border_w.clone();
+                    border_w_highlighted.setTo(highlight_color);
                     stack_c = border_w.clone();
                     for (int r = 0; r < num_of_rows; ++r) {
                         cv::Mat img_edit = createImage(c, r, "none");
-                        //if (mouseOnType == "grid_h" && mouseOnNum == r) {
-                        //    cv::vconcat(stack_c, img_edit, stack_c);
-                        //    cv::vconcat(stack_c, border_w_highlighted, stack_c);
-                        //}
-                        //else {
-                        cv::vconcat(stack_c, img_edit, stack_c);
-                        cv::vconcat(stack_c, border_w, stack_c);
-                        //}
+                        if (mouse_on_type == "grid_h" && mouse_on_num == r) {
+                            cv::vconcat(stack_c, img_edit, stack_c);
+                            cv::vconcat(stack_c, border_w_highlighted, stack_c);
+                        }
+                        else {
+                            cv::vconcat(stack_c, img_edit, stack_c);
+                            cv::vconcat(stack_c, border_w, stack_c);
+                        }
                     }
                 }
-                /*if (mouseOnType == "grid_v" && mouseOnNum == c) {
+                if ((mouse_on_type == "grid_v") && (mouse_on_num == c)) {
                     cv::hconcat(stack, stack_c, stack);
                     cv::hconcat(stack, border_h_highlighted, stack);
                 }
-                else {*/
-                cv::hconcat(stack, stack_c, stack);
-                cv::hconcat(stack, border_h, stack);
-                /*}*/
+                else {
+                    cv::hconcat(stack, stack_c, stack);
+                    cv::hconcat(stack, border_h, stack);
+                }
             }
         }
 
-        // std::cout << "stack x: " << stack.cols << "; stack y: " << stack.rows << std::endl;
+        // Set the last two rows to highlight_color
+        if (mouse_on_type == "border_h") {
+            stack.row(stack.rows - 2) = highlight_color;
+            stack.row(stack.rows - 1) = highlight_color;
+        }
+        // Set the last two cols to highlight_color
+        if (mouse_on_type == "border_v") {
+            stack.col(stack.cols - 2) = highlight_color;
+            stack.col(stack.cols - 1) = highlight_color;
+        }
+
         cv::imshow("Edit", stack);
 
-
-        //if (cv::waitKey(30) >= 0) {
-        //    close_ocv = true;
-        //    std::cout << "waitKey(30) >= 0";
-        //}
         if ((cv::waitKey(1) & 0xFF) == 'q') {
             close_ocv = true;  // Assuming close_ocv is the equivalent boolean controlling the loop.
         }
@@ -170,9 +170,7 @@ void OpenCV::startOpencvMainLoop() {
         // Check if the window is no longer visible
         if (cv::getWindowProperty("Edit", cv::WND_PROP_VISIBLE) < 1) {
             close_ocv = true;
-        }
-
-        // cout << "Zoom: " << zoom[0][0] << "; " << zoom[1][0] << "; " << zoom[0][1] << "; " << zoom[1][1] << "; " << endl;
+        } 
 
     }
     cv::destroyAllWindows();
@@ -217,11 +215,12 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
 
         case cv::EVENT_MOUSEMOVE:
             if (self->move) {
-                cout << "mousemove && move" << endl;
+                // cout << "mousemove && move" << endl;
                 self->tr_x[c][r] = x - self->start_x;
                 self->tr_y[c][r] = y - self->start_y;
             }
             if (self->resize) {
+                // bool block = false;
                 // Resize Vertical Border
                 if (self->mouse_on_type == "border_v") {
                     // self->border_time = std::chrono::system_clock::now();
@@ -234,12 +233,155 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                     }
                     self->setTotalSizes();
                 }
+                else if (self->mouse_on_type == "grid_v") {
+
+                    if (flags == 17) {  // SHIFT pressed
+
+                        bool block = false;
+                        int width = 1;
+                        std::array<int, 20> tmp_cell_widths = self->cell_widths;
+                        int delta = 0;
+                        int i;
+                        int quit_loop = 0;
+                        int mod = 0;
+
+                        for (int i = 0; i <= self->mouse_on_num; ++i) {
+                            width += self->cell_widths[i] + 1;
+                        }
+
+                        delta = x - width;
+
+                        // Moving Mouse to Right
+                        if (delta > 0) {
+                            // Adjustments for Right Side
+                            i = 0;
+                            while (i < delta) {
+                                self->resize_inc_right += 1;
+                                mod = self->resize_inc_right % (self->num_of_cols - (self->mouse_on_num + 1));
+                                int col = mod + self->mouse_on_num + 1;
+                                int tmp = tmp_cell_widths[col] - 1;
+                                if (tmp >= 40) {
+                                    tmp_cell_widths[col] = tmp;
+                                    i += 1;
+                                    quit_loop = 0;
+
+                                } else {
+                                    quit_loop += 1;
+                                }
+                                if (quit_loop > 20) {
+                                    block = true;
+                                    break;
+                                }
+                            }
+                            // Adjustments for Left Side
+                            i = 0;
+                            while (i < delta) {
+                                self->resize_inc_left += 1;
+                                int col = self->resize_inc_left % (self->mouse_on_num + 1);
+                                tmp_cell_widths[col] += 1;
+                                i += 1;
+                            }
+
+                        }
+
+                        // Moving Mouse to Left
+                        quit_loop = false;
+                        if (delta < 0) {
+                            // Adjustments for Left Side
+                            i = 0;
+                            while (i < abs(delta)) {
+                                self->resize_inc_left += 1;
+                                int col = self->resize_inc_left % (self->mouse_on_num + 1);
+                                // mod = self->resize_inc_right % (self->num_of_cols - (self->mouse_on_num + 1));
+                                // cout << self->resize_inc_right << "mod: " << mod << endl;
+                                // int col = mod + self->mouse_on_num + 1;
+                                int tmp = tmp_cell_widths[col] - 1;
+                                if (tmp >= 40) {
+                                    tmp_cell_widths[col] = tmp;
+                                    i += 1;
+                                    quit_loop = 0;
+                                } else {
+                                    quit_loop += 1;
+                                }
+                                if (quit_loop > 20) {
+                                    block = true;
+                                    break;
+                                }
+                            }
+                            // Adjustments for Right Side
+                            i = 0;
+                            while (i < abs(delta)) {
+                                self->resize_inc_right += 1;
+                                mod = self->resize_inc_right % (self->num_of_cols - (self->mouse_on_num + 1));
+                                int col = mod + self -> mouse_on_num + 1;
+                                tmp_cell_widths[col] += 1;
+                                i += 1;
+                            }
+
+                        }
+                       
+                        if (!block) {
+                            self->cell_widths = tmp_cell_widths;
+                            self->setTotalSizes();
+                        }
+                    }
+                    else {
+                        int width = 1;
+                        for (int i = 0; i <= self->mouse_on_num; ++i) {
+                            width += self->cell_widths[i] + 1;
+                        }
+                        int delta = x - width;
+
+                        int width_left = self->cell_widths[self->mouse_on_num] + delta;
+                        int width_right = self->cell_widths[self->mouse_on_num + 1] - delta;
+                        if ((width_left >= 40) && (width_right >= 40)) {
+                            self->cell_widths[self->mouse_on_num] = width_left;
+                            self->cell_widths[self->mouse_on_num + 1] = width_right;
+                        }
+
+
+
+                        //int left_index = self->mouse_on_num;
+                        //int right_index = left_index + 1 < self->cell_widths.size() ? left_index + 1 : left_index;
+
+                        //if (self->cell_widths[left_index] + delta > 40 && self->cell_widths[right_index] - delta > 40) {
+                        //    self->cell_widths[left_index] += delta;
+                        //    self->cell_widths[right_index] -= delta;
+                        //}
+                        // self->setTotalSizes();
+                    }
+                }
+                else if (self->mouse_on_type == "border_h") {
+                    // self->border_time = std::chrono::system_clock::now();
+                    int delta = int((y - self->height_total) / self->num_of_rows);
+                    for (int i = 0; i < self->cell_heights.size(); ++i) {
+                        int new_height = self->cell_heights[i] + delta;
+                        if (new_height > 40) { // Ensure the new width is above the minimum
+                            self->cell_heights[i] = new_height;
+                        }
+                    }
+                    self->setTotalSizes();
+                }
+                else if (self->mouse_on_type == "grid_h") {
+                    int height = 1;
+                    for (int i = 0; i <= self->mouse_on_num; ++i) {
+                        height += self->cell_heights[i] + 1;
+                    }
+                    int delta = y - height;
+
+                    int height_top = self->cell_heights[self->mouse_on_num] + delta;
+                    int height_bottom = self->cell_heights[self->mouse_on_num + 1] - delta;
+                    if ((height_top >= 40) && (height_bottom >= 40)) {
+                        self->cell_heights[self->mouse_on_num] = height_top;
+                        self->cell_heights[self->mouse_on_num + 1] = height_bottom;
+                    }
+                }
             }
             break;
 
         case cv::EVENT_MOUSEWHEEL:
             switch (flags) {
-            case 7864336: ///7864320
+            case 7864336:
             case 15728656:
             case 23592976:
             case 31457296:
@@ -282,7 +424,6 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                 }
                 break;
             default:
-                // cout << "flags:" << flags << endl;
                 break;
             }
 

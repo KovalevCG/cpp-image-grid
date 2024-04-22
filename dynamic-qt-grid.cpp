@@ -1,6 +1,7 @@
 #include "dynamic-qt-grid.h"
 #include "global-resources.h"
 #include "image-label.h"
+#include "screenshot.h"
 
 #include <QHBoxLayout>
 #include <QVBoxLayout>
@@ -8,8 +9,14 @@
 #include <QIcon>
 #include <QTimer>
 #include <QApplication>
+#include <QScreen>
+#include <QString>
 
 #include <iostream>
+#include <string>
+
+// std::string directory = "/path/to/your/directory";
+Screenshot screenshot_ocv;
 
 //
 //  INIT
@@ -191,6 +198,29 @@ void DynamicQtGrid::recreateGrid() {
 //
 void DynamicQtGrid::hideMeForScreenshot(int scrn, int c, int r) {
     std::cout << "Screen: " << scrn << "; Column: " << c << "; Row: " << r << std::endl;
+    this->window()->hide();
+    QTimer::singleShot(200, this, [this, scrn, c, r]() { this->makeScreenshot(scrn, c, r); });
+    // screenshot.screenshotRegion(r, c);
+}
+
+void DynamicQtGrid::makeScreenshot(int scrn, int c, int r) {
+    auto screen = QApplication::screens()[scrn];
+    QPixmap screenshot = screen->grabWindow(0);
+    QString filename = QString("screenshots/screenshot_%1_%2.png").arg(c, 2, 10, QChar('0')).arg(r, 2, 10, QChar('0'));
+    screenshot.save(filename, "PNG");
+
+    if (screenshot_ocv.screenshotRegion(c, r)) { // Assuming screenshotRegion is a method that returns a bool
+        this->show();
+        // QIcon icon(filename);
+        GlobalResources::setImagePath(c, r, filename.toStdString());
+        recreateGrid();
+        //// Assuming photoViewer is a 2D array of QLabel or some widget to display images
+        //photoViewer[r][c]->setPixmap(icon.pixmap(photoViewer[r][c]->size()).scaled(photoViewer[r][c]->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
+        //img_paths[r][c] = filename.toStdString(); // Assuming img_paths is a 2D array of std::string
+        //update_ocv_images = true; // Assuming update_ocv_images is a global or class member boolean
+    }
+    this->window()->show();
+
 }
 
 //
