@@ -2,17 +2,16 @@
 #include "global-resources.h"
 
 #include <chrono>
+#include <algorithm>
 
 using std::cout;
 using std::endl;
 
 // Constructor
 OpenCV::OpenCV() {
-
     for (auto& row : zoom) { // Initialize all elements to 1.0
         row.fill(1.0);
     }
-
 }
 
 // Main Loop
@@ -48,6 +47,31 @@ void OpenCV::startOpencvMainLoop() {
     // Save As Button
     // ---------------
 
+    // Load the foreground and background images and alpha masks
+    cv::Mat background = cv::imread("images/test/background.png", cv::IMREAD_COLOR);
+    cv::Mat mask_thin = cv::imread("images/test/mask_thin.png", cv::IMREAD_GRAYSCALE);
+    cv::Mat mask_thick = cv::imread("images/test/mask_thick.png", cv::IMREAD_GRAYSCALE);
+    cv::Mat foreground_highlighted = cv::Mat::zeros(40, 40, CV_8UC3);
+    foreground_highlighted.setTo(HIGHLIGHT_COLOR);
+    cv::Mat foreground_white = cv::Mat::zeros(40, 40, CV_8UC3);
+    foreground_white.setTo(WHITE_COLOR);
+    cv::Mat foreground_black = cv::Mat::zeros(40, 40, CV_8UC3);
+    foreground_black.setTo(BLACK_COLOR);
+
+
+
+    //cv::Mat img_save = cv::imread("images/save-opencv.png");
+    //cv::resize(img_save, img_save, cv::Size(40, 40), 0, 0, cv::INTER_LINEAR);
+    //// Extract mask and create inverted mask
+    //cv::Mat img_save_mask = img_save.clone();
+    //cv::cvtColor(img_save, img_save_mask, cv::COLOR_BGR2GRAY); // Assuming the mask is in the first channel
+    //cv::Mat img_save_mask_inverted;
+    //cv::bitwise_not(img_save_mask, img_save_mask_inverted);
+
+    //// Create a white image with the same size as img_save
+    //cv::Mat img_save_white = cv::Mat::ones(img_save.rows, img_save.cols, img_save.type()) * 128;
+
+
     while (!close_ocv) {
 
         // update opencv images if needed
@@ -65,7 +89,7 @@ void OpenCV::startOpencvMainLoop() {
         if (!GlobalResources::anyMergedCols()) {
             cv::Mat border_w = cv::Mat::zeros(1, width_total, CV_8UC3);
             cv::Mat border_w_highlighted = border_w.clone();
-            border_w_highlighted.setTo(highlight_color);
+            border_w_highlighted.setTo(HIGHLIGHT_COLOR);
             stack = border_w.clone();
             for (int r = 0; r < num_of_rows; ++r) {
                 cv::Mat stack_r;
@@ -84,7 +108,7 @@ void OpenCV::startOpencvMainLoop() {
                         cv::Mat img_edit = createImage(c, r);
                         cv::Mat border_h = cv::Mat::zeros(img_edit.rows, 1, CV_8UC3);
                         cv::Mat border_h_highlighted = border_h.clone();
-                        border_h_highlighted.setTo(highlight_color);
+                        border_h_highlighted.setTo(HIGHLIGHT_COLOR);
 
                         if (mouse_on_type == "grid_v" && mouse_on_num == c) {
                             cv::hconcat(stack_r, img_edit, stack_r);
@@ -110,7 +134,7 @@ void OpenCV::startOpencvMainLoop() {
         } else {    // "else" - we have at least one combined column
             cv::Mat border_h = cv::Mat::zeros(height_total, 1, CV_8UC3);
             cv::Mat border_h_highlighted = border_h.clone();
-            border_h_highlighted.setTo(highlight_color);
+            border_h_highlighted.setTo(HIGHLIGHT_COLOR);
             stack = border_h.clone();
             for (int c = 0; c < num_of_cols; ++c) {
                 cv::Mat stack_c;
@@ -125,7 +149,7 @@ void OpenCV::startOpencvMainLoop() {
                 else {
                     cv::Mat border_w = cv::Mat::zeros(1, cell_widths[c], CV_8UC3);
                     cv::Mat border_w_highlighted = border_w.clone();
-                    border_w_highlighted.setTo(highlight_color);
+                    border_w_highlighted.setTo(HIGHLIGHT_COLOR);
                     stack_c = border_w.clone();
                     for (int r = 0; r < num_of_rows; ++r) {
                         cv::Mat img_edit = createImage(c, r, "none");
@@ -152,14 +176,28 @@ void OpenCV::startOpencvMainLoop() {
 
         // Set the last two rows to highlight_color
         if (mouse_on_type == "border_h") {
-            stack.row(stack.rows - 2) = highlight_color;
-            stack.row(stack.rows - 1) = highlight_color;
+            stack.row(stack.rows - 2) = HIGHLIGHT_COLOR;
+            stack.row(stack.rows - 1) = HIGHLIGHT_COLOR;
         }
         // Set the last two cols to highlight_color
         if (mouse_on_type == "border_v") {
-            stack.col(stack.cols - 2) = highlight_color;
-            stack.col(stack.cols - 1) = highlight_color;
+            stack.col(stack.cols - 2) = HIGHLIGHT_COLOR;
+            stack.col(stack.cols - 1) = HIGHLIGHT_COLOR;
         }
+
+        // SAVE BUTTON
+        // Creating ROI
+        cv::Rect roi_save(stack.cols - mask_thick.cols, 0, mask_thick.cols, mask_thick.rows);
+        cv::Mat roi = stack(roi_save);
+        // Apply masks and combine
+        if (mouse_on_type == "save_button") {
+            foreground_highlighted.copyTo(roi, mask_thick);
+        }
+        else {
+            foreground_white.copyTo(roi, mask_thick);
+            foreground_black.copyTo(roi, mask_thin);
+        }
+
 
         cv::imshow("Edit", stack);
 
@@ -174,6 +212,32 @@ void OpenCV::startOpencvMainLoop() {
 
     }
     cv::destroyAllWindows();
+}
+
+void OpenCV::opencvReadImages() {
+    // Load images based on paths in GlobalResources
+    for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
+        for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
+            std::cout << GlobalResources::getImagePath(c, r) << std::endl;
+            images[c][r] = cv::imread(GlobalResources::getImagePath(c, r), cv::IMREAD_COLOR);
+        }
+    }
+}
+
+void OpenCV::setTotalSizes() {
+    width_total = 0;
+    height_total = 0;
+
+    for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
+        width_total += cell_widths[c];
+    }
+    for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
+        height_total += cell_heights[r];
+    }
+    width_total += GlobalResources::num_of_cols + 1;
+    height_total += GlobalResources::num_of_rows + 1;
+
+    // std::cout << "width_total : " << width_total << ";   height_total : " << height_total << std::endl;
 }
 
 void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
@@ -200,6 +264,7 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                 cout << "SAVE" << endl;
                 // Trigger save file dialog
                 // self->saveFileDialog();
+                self->saveImage();
             }
             else {
                 self->resize = true;
@@ -438,7 +503,7 @@ void OpenCV::mousePosition(int x, int y) {
     }
     // Right Border
     if (x > width_total - 9) {
-        border_time = std::chrono::system_clock::now();
+        // border_time = std::chrono::system_clock::now();
         mouse_on_type = "border_v";
         mouse_on_num = num_of_cols - 1;
         return;
@@ -526,32 +591,6 @@ void OpenCV::mousePosition(int x, int y) {
             }
         }
     }
-}
-
-void OpenCV::opencvReadImages() {
-    // Load images based on paths in GlobalResources
-    for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
-        for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
-            std::cout << GlobalResources::getImagePath(c, r) << std::endl;
-            images[c][r] = cv::imread(GlobalResources::getImagePath(c, r), cv::IMREAD_COLOR);
-        }
-    }
-}
-
-void OpenCV::setTotalSizes() {
-    width_total = 0;
-    height_total = 0;
-
-    for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
-        width_total += cell_widths[c];
-    }
-    for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
-        height_total += cell_heights[r];
-    }
-    width_total += GlobalResources::num_of_cols + 1;
-    height_total += GlobalResources::num_of_rows + 1;
-
-    // std::cout << "width_total : " << width_total << ";   height_total : " << height_total << std::endl;
 }
 
 cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize) {
@@ -642,8 +681,168 @@ cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize)
             target_size = cv::Size(cell_widths[col], cell_heights[row]);
         }
         cv::resize(img_edit, img_edit, target_size, 0, 0, cv::INTER_AREA);
-        // cout << "rows resize: " << img_edit.rows << "; cols resize: " << img_edit.cols << endl;
+    }
+    else {
+        cout << "- No Resize -" << endl;
     }
 
     return img_edit;
+}
+
+cv::Mat OpenCV::createSaveImage(int col, int row, std::string combined, bool resize) {
+    // Create image without resize
+    cv::Mat img_edit = createImage(col, row, combined, false);
+
+    if (resize) {
+        cv::Size target_size;
+        if (combined == "row") {
+            /*target_size = cv::Size(width_save_total + num_of_cols - 1, cell_save_heights[row]);*/
+            target_size = cv::Size(width_save_total-2, cell_save_heights[row]);
+        }
+        else if (combined == "col") {
+            // target_size = cv::Size(cell_save_widths[col], height_save_total + num_of_rows - 1);
+            target_size = cv::Size(cell_save_widths[col], height_save_total-2);
+        }
+        else {
+            target_size = cv::Size(cell_save_widths[col], cell_save_heights[row]);
+        }
+        cv::resize(img_edit, img_edit, target_size, 0, 0, cv::INTER_AREA);
+
+    }
+
+    return  img_edit;
+
+}
+
+void OpenCV::saveImage(std::string path) {
+
+    // std::array<double, 400> cell_scale_coefs {};
+    std::vector <double> cell_scale_coefs;
+    cv::Mat img_edit;
+
+    // Calculation of a scale coefficients of all visible cells
+    // If we don't have combined columns (Nothing combined or rows combined)
+    if (!GlobalResources::anyMergedCols()) {
+        // Loop all rows
+        for (int row = 0; row < num_of_rows; row++) {
+            // If current row merged
+            if (GlobalResources::merged_rows[row]) {
+                img_edit = createImage(0, row, "row", false);
+                cell_scale_coefs.push_back(double(img_edit.rows) / double(cell_heights[row]));
+            }
+            else {
+                for (int col = 0; col < num_of_cols; col++) {
+                    img_edit = createImage(col, row, "none", false);
+                    cell_scale_coefs.push_back(double(img_edit.rows) / double(cell_heights[row]));
+                }
+            }
+
+        }
+    }
+    else {  // if we have combined columns
+        for (int col = 0; col < num_of_cols; col++) {
+            // If current collumn combined
+            if (GlobalResources::merged_cols[col]) {
+                img_edit = createImage(col, 0, "col", false);
+                cell_scale_coefs.push_back(double(img_edit.cols) / double(cell_widths[col]));
+            }
+            else {
+                for (int row = 0; row < num_of_rows; row++) {
+                    img_edit = createImage(col, row, "none", false);
+                    cell_scale_coefs.push_back(double(img_edit.cols) / double(cell_widths[col]));
+                }
+            }
+        }
+    }
+
+    // Calculation of global list vars "cell_save_widths[]" and "cell_save_heights[]"
+    auto max_scale_coef = std::max_element(cell_scale_coefs.begin(), cell_scale_coefs.end());
+    // std::cout << "MAX: " << *max_scale_coef << endl;
+    if ((width_total * *max_scale_coef) < GlobalResources::SAVE_RESOLUTION_WIDTH) {
+        for (int i = 0; i < cell_widths.size(); i++) {
+            cell_save_widths[i] = int(cell_widths[i] * *max_scale_coef);
+        }
+        for (int i = 0; i < cell_heights.size(); i++) {
+            cell_save_heights[i] = int(cell_heights[i] * *max_scale_coef);
+        }
+    }
+    else {
+        double resolution_coef = double(GlobalResources::SAVE_RESOLUTION_WIDTH) / double(width_total);
+        for (int i = 0; i < cell_widths.size(); i++) {
+            cell_save_widths[i] = int(cell_widths[i] * resolution_coef);
+        }
+        for (int i = 0; i < cell_heights.size(); i++) {
+            cell_save_heights[i] = int(cell_heights[i] * resolution_coef);
+        }
+    }
+
+    // Calculate global variables "width_save_total" and "height_save_total"
+    width_save_total = 0;
+    for (int i = 0; i < num_of_cols; i++) {
+        width_save_total += cell_save_widths[i];   //ERROR ARRAY
+    }
+    height_save_total = 0;
+    for (int i = 0; i < num_of_rows; i++) {
+        height_save_total += cell_save_heights[i];
+    }
+    width_save_total += GlobalResources::num_of_cols + 1;
+    height_save_total += GlobalResources::num_of_rows + 1;
+
+
+    // Stack Images
+    // If we don't have combined columns
+    cv::Mat stack;
+    if (!GlobalResources::anyMergedCols()) {
+        cv::Mat border_w = cv::Mat::zeros(1, width_save_total, CV_8UC3);
+        stack = border_w.clone();
+        for (int r = 0; r < num_of_rows; ++r) {
+            cv::Mat stack_r;
+            // If current row merged
+            if (GlobalResources::merged_rows[r]) {
+                cv::Mat img_edit = createSaveImage(0, r, "row", true);
+                cv::Mat border_h = cv::Mat::zeros(cell_save_heights[r], 1, CV_8UC3);
+                stack_r = cv::Mat::zeros(cell_save_heights[r], 1, CV_8UC3);
+                cv::hconcat(stack_r, img_edit, stack_r);
+                cv::hconcat(stack_r, border_h, stack_r);
+            }
+            else {  // If current row not merged
+                stack_r = cv::Mat::zeros(cell_save_heights[r], 1, CV_8UC3);
+                for (int c = 0; c < num_of_cols; ++c) {
+                    cv::Mat img_edit = createSaveImage(c, r, "none", true);
+                    cv::Mat border_h = cv::Mat::zeros(img_edit.rows, 1, CV_8UC3);
+                    cv::hconcat(stack_r, img_edit, stack_r);
+                    cv::hconcat(stack_r, border_h, stack_r);
+                }
+            }
+            cv::vconcat(stack, stack_r, stack);
+            cv::vconcat(stack, border_w, stack);
+        }
+    }
+    else {    // "else" - we have at least one combined column
+        cv::Mat border_h = cv::Mat::zeros(height_save_total, 1, CV_8UC3);
+        stack = border_h.clone();
+        for (int c = 0; c < num_of_cols; ++c) {
+            cv::Mat stack_c;
+            if (GlobalResources::merged_cols[c]) {
+                cv::Mat img_edit = createSaveImage(c, 0, "col", true);
+                cv::Mat border_w = cv::Mat::zeros(1, cell_save_widths[c], CV_8UC3);
+                stack_c = cv::Mat::zeros(1, cell_save_widths[c], CV_8UC3);
+                cv::vconcat(stack_c, img_edit, stack_c);
+                cv::vconcat(stack_c, border_w, stack_c);
+            }
+            else {
+                cv::Mat border_w = cv::Mat::zeros(1, cell_save_widths[c], CV_8UC3);
+                stack_c = border_w.clone();
+                for (int r = 0; r < num_of_rows; ++r) {
+                    cv::Mat img_edit = createSaveImage(c, r, "none", true);
+                    cv::vconcat(stack_c, img_edit, stack_c);
+                    cv::vconcat(stack_c, border_w, stack_c);
+                }
+            }
+            cv::hconcat(stack, stack_c, stack);
+            cv::hconcat(stack, border_h, stack);
+        }
+    }
+    cv::imwrite("d:/stack.jpg", stack);
+
 }

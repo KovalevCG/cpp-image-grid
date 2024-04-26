@@ -7,6 +7,13 @@ class GlobalResources {
 
 public:
 
+    // Settings
+    static const int START_CV_WIDTH = 900;
+    static const int START_CV_HEIGHT = 700;
+    static const int SAVE_RESOLUTION_WIDTH = 1600;
+    static const int SAVE_RESOLUTION_HEIGHT = 1200;
+    static const std::string VERSION;
+
     // Methods for "img_paths" array
     static void setImagePath(size_t col, size_t row, const std::string& img_path);
     static std::string getImagePath(size_t col, size_t row);
@@ -21,6 +28,7 @@ public:
     static std::string bg_path_qt;
     static std::array<bool, 20> merged_cols;
     static std::array<bool, 20> merged_rows;
+
 
 private:
 

@@ -14,6 +14,7 @@ class OpenCV {
 public:
     OpenCV();
     void startOpencvMainLoop();
+    void saveImage(std::string path = "");
 
 private:
     static constexpr int SIZE = 20;
@@ -22,6 +23,7 @@ private:
     void setTotalSizes();
     static void onMouse(int event, int x, int y, int flags, void* userdata);
     cv::Mat createImage(int col, int row, std::string combined = "none", bool resize = true);
+    cv::Mat createSaveImage(int col, int row, std::string combined = "none", bool resize = true);
     void mousePosition(int x, int y);
 
     bool close_ocv = false;
@@ -31,7 +33,9 @@ private:
     // bool shift_pressed = false;     // Perhaps unnecessary
 
 
-    cv::Scalar highlight_color = cv::Scalar(220, 220, 0);
+    cv::Scalar HIGHLIGHT_COLOR = cv::Scalar(220, 220, 0);
+    cv::Scalar WHITE_COLOR = cv::Scalar(245, 245, 245);
+    cv::Scalar BLACK_COLOR = cv::Scalar(10, 10, 10);
     std::array<std::array<cv::Mat, SIZE>, SIZE> images;
     std::array<int, SIZE> cell_widths { };
     std::array<int, SIZE> cell_heights { };
@@ -51,12 +55,18 @@ private:
     unsigned int resize_inc_left = 0;
     unsigned int resize_inc_right = 0;
 
+    // Mouse
     int start_x = 0;
     int start_y = 0;
-
     std::string mouse_on_type = "none";
     int mouse_on_num = 0;
 
-    std::chrono::time_point<std::chrono::system_clock> border_time;
+    // std::chrono::time_point<std::chrono::system_clock> border_time;
+
+    // Save Image
+    int width_save_total = 0;
+    int height_save_total = 0;
+    std::array<int, SIZE> cell_save_widths { };
+    std::array<int, SIZE> cell_save_heights { };
 
 };

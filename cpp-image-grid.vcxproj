@@ -107,6 +107,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ocv-test.cpp" />
     <ClCompile Include="opencv.cpp" />
     <ClCompile Include="qt-window.cpp" />
     <ClCompile Include="screenshot.cpp" />
@@ -121,6 +122,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="global-resources.h" />
+    <ClInclude Include="ocv-test.h" />
     <ClInclude Include="opencv.h" />
     <ClInclude Include="screenshot.h" />
     <QtMoc Include="qt-window.h" />

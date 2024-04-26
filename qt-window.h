@@ -13,4 +13,6 @@ private:
     void onEditButtonClicked();
     void setupUi();
     void quitApp();
+    void showAbout();
+    void runOcvTest();
 };

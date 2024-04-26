@@ -1,5 +1,6 @@
 #include "qt-window.h"
 #include "opencv.h"
+#include "ocv-test.h"
 #include "dynamic-qt-grid.h"
 
 #include <QHBoxLayout>
@@ -7,11 +8,15 @@
 #include <QMenuBar>
 #include <QApplication>
 #include <QFrame>
+#include <QMessageBox>
 
 #include <iostream>
-using namespace std;
+
+using std::cout;
+using std::endl;
 
 OpenCV opencv;
+OcvTest ocvTest;
 
 QtWindow::QtWindow(QWidget* parent) : QMainWindow(parent) {
 
@@ -22,7 +27,7 @@ QtWindow::QtWindow(QWidget* parent) : QMainWindow(parent) {
 void QtWindow::setupUi() {
 
     // Window adjutments
-    this->setWindowTitle("Image Grid");
+    this->setWindowTitle("Image Grid v" + QString::fromStdString(GlobalResources::VERSION));
     this->setWindowIcon(QIcon("./images/logo/Logo-V1.png"));
     this->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
@@ -39,6 +44,8 @@ void QtWindow::setupUi() {
     QMenu* fileMenu = menuBar->addMenu("File");
     QMenu* helpMenu = menuBar->addMenu("Help");
     fileMenu->addAction("Exit", this, &QtWindow::quitApp);
+    fileMenu->addAction("Run OCV Test", this, &QtWindow::runOcvTest);
+    helpMenu->addAction("About", this, &QtWindow::showAbout);
 
     // Line under menuBar
     QFrame* menuLine = new QFrame();
@@ -78,4 +85,17 @@ void QtWindow::onEditButtonClicked() {
 
 void QtWindow::quitApp() {
     QCoreApplication::quit();
+}
+
+void QtWindow::runOcvTest() {
+    ocvTest.runTest();
+}
+
+void QtWindow::showAbout() {
+    QMessageBox aboutBox;
+    aboutBox.setIcon(QMessageBox::Information);
+    aboutBox.setWindowTitle("About");
+    aboutBox.setText("  Image Grid v" + QString::fromStdString(GlobalResources::VERSION) + "   \n\n           2024         \n by Alexander Kovalev \n kovalev.cg@gmail.com");
+    aboutBox.setWindowFlags(Qt::WindowStaysOnTopHint);
+    aboutBox.exec();
 }

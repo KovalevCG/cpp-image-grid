@@ -19,6 +19,8 @@ int GlobalResources::num_of_cols = 2;
 int GlobalResources::num_of_rows = 2;
 std::string GlobalResources::bg_path_opencv = "images//bg_image_opencv.png";
 std::string GlobalResources::bg_path_qt = "images//bg_image_qt_white.png";
+// Settings
+const std::string GlobalResources::VERSION = "2.0.0";
 
 void GlobalResources::setImagePath(size_t col, size_t row, const std::string& path) {
     if (row < SIZE && col < SIZE) {
