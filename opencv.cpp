@@ -242,7 +242,7 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
     int c;
     int r;
 
-    cout << "x: " << x << ";   y: " << y << endl;
+    // cout << "x: " << x << ";   y: " << y << endl;
 
     if (!self->resize) {
         self->mousePosition(x, y);
