@@ -11,16 +11,14 @@
 #include <QApplication>
 #include <QScreen>
 #include <QString>
+#include <QMessageBox>
 
 #include <iostream>
 #include <string>
 
-// std::string directory = "/path/to/your/directory";
 Screenshot screenshot_ocv;
 
-//
 //  INIT
-//
 DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
     // Main Grid Layout
     gridLayout = new QGridLayout(this);
@@ -44,9 +42,7 @@ DynamicQtGrid::DynamicQtGrid(QWidget* parent) : QWidget(parent) {
     recreateGrid();
 };
 
-//
 //  RECREATE GRID
-//
 void DynamicQtGrid::recreateGrid() {
 
     clearLayout(gridLayout);
@@ -78,7 +74,6 @@ void DynamicQtGrid::recreateGrid() {
         QPushButton* mergeColumnButton = new QPushButton(this);
         mergeColumnButton->setToolTip("Merge column");
         if (GlobalResources::merged_cols[i]) {
-            // mergeColumnButton->setIcon(QIcon("images/icons/demerge-column.svg"));
             mergeColumnButton->setIcon(demerge_column_icon);
         }
         else {
@@ -129,7 +124,6 @@ void DynamicQtGrid::recreateGrid() {
         for (int c = 0; c < GlobalResources::num_of_cols; c++) {
             QVBoxLayout* insideImgLayout = new QVBoxLayout();
             imagesLayout->addLayout(insideImgLayout);
-            // insideImgLayout->setSpacing(2);
             if (GlobalResources::merged_cols[c]) {      // current column merged
                 insideImgLayout->addLayout(constructImageAndScreenshotLayout(c, 0));
             }
@@ -193,16 +187,14 @@ void DynamicQtGrid::recreateGrid() {
     });
 };
 
-//
 //  HIDE ME FOR SCREENSHOT
-//
 void DynamicQtGrid::hideMeForScreenshot(int scrn, int c, int r) {
-    std::cout << "Screen: " << scrn << "; Column: " << c << "; Row: " << r << std::endl;
     this->window()->hide();
     QTimer::singleShot(200, this, [this, scrn, c, r]() { this->makeScreenshot(scrn, c, r); });
     // screenshot.screenshotRegion(r, c);
 }
 
+//  MAKE SCREENSHOT
 void DynamicQtGrid::makeScreenshot(int scrn, int c, int r) {
     auto screen = QApplication::screens()[scrn];
     QPixmap screenshot = screen->grabWindow(0);
@@ -211,21 +203,14 @@ void DynamicQtGrid::makeScreenshot(int scrn, int c, int r) {
 
     if (screenshot_ocv.screenshotRegion(c, r)) { // Assuming screenshotRegion is a method that returns a bool
         this->show();
-        // QIcon icon(filename);
         GlobalResources::setImagePath(c, r, filename.toStdString());
         recreateGrid();
-        //// Assuming photoViewer is a 2D array of QLabel or some widget to display images
-        //photoViewer[r][c]->setPixmap(icon.pixmap(photoViewer[r][c]->size()).scaled(photoViewer[r][c]->size(), Qt::KeepAspectRatioByExpanding, Qt::SmoothTransformation));
-        //img_paths[r][c] = filename.toStdString(); // Assuming img_paths is a 2D array of std::string
-        //update_ocv_images = true; // Assuming update_ocv_images is a global or class member boolean
     }
     this->window()->show();
 
 }
 
-//
 //  CONSTRUCT IMAGE + SCREENSHOT LAYOUT
-//
 QVBoxLayout* DynamicQtGrid::constructImageAndScreenshotLayout(int c, int r) {
 
     // Layouts
@@ -271,9 +256,7 @@ QVBoxLayout* DynamicQtGrid::constructImageAndScreenshotLayout(int c, int r) {
     return layout;
 }
 
-//
 //  SHOW GRID IMAGES
-//
 void DynamicQtGrid::showGridImages() {
     // Find all child ImageLabel instances
     const auto imageLabels = findChildren<ImageLabel*>();
@@ -286,9 +269,7 @@ void DynamicQtGrid::showGridImages() {
     }
 }
 
-//
 //  CLEAR LAYOUT
-//
 void DynamicQtGrid::clearLayout(QLayout* layout) {
     QLayoutItem* item;
     while ((item = layout->takeAt(0)) != nullptr) {
@@ -303,59 +284,62 @@ void DynamicQtGrid::clearLayout(QLayout* layout) {
     }
 }
 
-//
 // ON MERGE BUTTON CLICKED
-//
 void DynamicQtGrid::onMergeColumnButtonClicked(int i) {
     GlobalResources::merged_cols[i] = !GlobalResources::merged_cols[i];
-    std::cout << "merged col number: " << i << std::endl;
     // Fill all rows with "false"
     std::fill(GlobalResources::merged_rows.begin(), GlobalResources::merged_rows.end(), false);
     DynamicQtGrid::recreateGrid();
 }
 void DynamicQtGrid::onMergeRowButtonClicked(int i) {
     GlobalResources::merged_rows[i] = !GlobalResources::merged_rows[i];
-    std::cout << "merged row number: " << i << std::endl;
     // Fill all colls with "false"
     std::fill(GlobalResources::merged_cols.begin(), GlobalResources::merged_cols.end(), false);
     DynamicQtGrid::recreateGrid();
 }
 
-//
 //  ADD/HIDE COLUMN/ROW
-//
 void DynamicQtGrid::hideColumn() {
     if (GlobalResources::num_of_cols > 1) {
         GlobalResources::num_of_cols--;
-        std::cout << GlobalResources::num_of_cols << std::endl;
         DynamicQtGrid::recreateGrid();
     }
 }
 void DynamicQtGrid::addColumn() {
-    if (GlobalResources::num_of_cols < 20) {
+    if (GlobalResources::num_of_cols < GlobalResources::SIZE) {
         GlobalResources::num_of_cols++;
-        std::cout << GlobalResources::num_of_cols << std::endl;
         DynamicQtGrid::recreateGrid();
+    }
+    else {
+        freeVersionWindow();
     }
 }
 void DynamicQtGrid::hideRow() {
     if (GlobalResources::num_of_rows > 1) {
         GlobalResources::num_of_rows--;
-        std::cout << GlobalResources::num_of_rows << std::endl;
         DynamicQtGrid::recreateGrid();
     }
 }
 void DynamicQtGrid::addRow() {
-    if (GlobalResources::num_of_rows < 20) {
+    if (GlobalResources::num_of_rows < GlobalResources::SIZE) {
         GlobalResources::num_of_rows++;
-        std::cout << GlobalResources::num_of_rows << std::endl;
         DynamicQtGrid::recreateGrid();
+    }
+    else {
+        freeVersionWindow();
     }
 }
 
-//
-//  PRINT LAYOUT CHILDREN       To Do: Calculate number of all elements in main window, check for memory safety, better representation on screen
-//
+void DynamicQtGrid::freeVersionWindow() {
+    QMessageBox freeVersion;
+    freeVersion.setIcon(QMessageBox::Information);
+    freeVersion.setWindowTitle("Free Version");
+    freeVersion.setText("The free version of ImageGrid\nis limited to 2 columns and 2\nrows.");
+    freeVersion.setWindowFlags(Qt::WindowStaysOnTopHint);
+    freeVersion.exec();
+}
+
+//  TEST METHOD.  PRINT LAYOUT CHILDREN       To Do: Calculate number of all elements in main window, check for memory safety, better representation on screen
 void DynamicQtGrid::printLayoutChildren(QLayout* layout) {
     std::cout << "----- Start of Layout Children Print ------" << "; layout->count(): " << layout->count() << std::endl;
     if (!layout) {

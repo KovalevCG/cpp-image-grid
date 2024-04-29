@@ -5,6 +5,8 @@ VisualStudioVersion = 17.9.34714.143
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cpp-image-grid", "cpp-image-grid.vcxproj", "{55F3BF81-803C-47F2-BD7C-E4322F39E5C9}"
 EndProject
+Project("{54435603-DBB4-11D2-8724-00A0C9A8B90C}") = "ImageGridSetup", "ImageGridSetup\ImageGridSetup.vdproj", "{135DEC17-7CBA-4AC0-BF2F-A5C407350974}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -15,6 +17,8 @@ Global
 		{55F3BF81-803C-47F2-BD7C-E4322F39E5C9}.Debug|x64.Build.0 = Debug|x64
 		{55F3BF81-803C-47F2-BD7C-E4322F39E5C9}.Release|x64.ActiveCfg = Release|x64
 		{55F3BF81-803C-47F2-BD7C-E4322F39E5C9}.Release|x64.Build.0 = Release|x64
+		{135DEC17-7CBA-4AC0-BF2F-A5C407350974}.Debug|x64.ActiveCfg = Debug
+		{135DEC17-7CBA-4AC0-BF2F-A5C407350974}.Release|x64.ActiveCfg = Release
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

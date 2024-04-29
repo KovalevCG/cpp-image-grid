@@ -1,6 +1,6 @@
 #include "qt-window.h"
 #include "opencv.h"
-#include "ocv-test.h"
+// #include "ocv-test.h"
 #include "dynamic-qt-grid.h"
 
 #include <QHBoxLayout>
@@ -9,6 +9,9 @@
 #include <QApplication>
 #include <QFrame>
 #include <QMessageBox>
+#include <QDateTime>
+#include <QFileDialog>
+#include <QStandardPaths>
 
 #include <iostream>
 
@@ -16,18 +19,16 @@ using std::cout;
 using std::endl;
 
 OpenCV opencv;
-OcvTest ocvTest;
+// OcvTest ocvTest;
 
 QtWindow::QtWindow(QWidget* parent) : QMainWindow(parent) {
-
     setupUi();
-
 }
 
 void QtWindow::setupUi() {
 
     // Window adjutments
-    this->setWindowTitle("Image Grid v" + QString::fromStdString(GlobalResources::VERSION));
+    this->setWindowTitle("Image Grid v." + QString::fromStdString(GlobalResources::VERSION) + " Free Version");
     this->setWindowIcon(QIcon("./images/logo/Logo-V1.png"));
     this->setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
@@ -44,7 +45,8 @@ void QtWindow::setupUi() {
     QMenu* fileMenu = menuBar->addMenu("File");
     QMenu* helpMenu = menuBar->addMenu("Help");
     fileMenu->addAction("Exit", this, &QtWindow::quitApp);
-    fileMenu->addAction("Run OCV Test", this, &QtWindow::runOcvTest);
+    //fileMenu->addAction("Save", this, &QtWindow::saveFileDialog);
+    //fileMenu->addAction("Run OCV Test", this, &QtWindow::runOcvTest);
     helpMenu->addAction("About", this, &QtWindow::showAbout);
 
     // Line under menuBar
@@ -88,7 +90,7 @@ void QtWindow::quitApp() {
 }
 
 void QtWindow::runOcvTest() {
-    ocvTest.runTest();
+   // ocvTest.runTest();
 }
 
 void QtWindow::showAbout() {
@@ -98,4 +100,26 @@ void QtWindow::showAbout() {
     aboutBox.setText("  Image Grid v" + QString::fromStdString(GlobalResources::VERSION) + "   \n\n           2024         \n by Alexander Kovalev \n kovalev.cg@gmail.com");
     aboutBox.setWindowFlags(Qt::WindowStaysOnTopHint);
     aboutBox.exec();
+}
+
+void QtWindow::saveFileDialog() {
+    // Generate the default filename using current time
+    QString qt_save_path;
+    if (GlobalResources::save_path == "") { // if save_path empty => save_path = Desktop path
+        qt_save_path = QStandardPaths::writableLocation(QStandardPaths::DesktopLocation);
+    }
+    else {
+        qt_save_path = QString::fromStdString(GlobalResources::save_path);
+    }
+    QString default_file_name = qt_save_path + "/ImageGrid_" + QDateTime::currentDateTime().toString("ddHHmmss") + ".jpg";
+
+    // Create the file dialog and set up the properties
+    QString filter = "Image (*.jpg);;Image (*.png)";
+    QString saveFileName = QFileDialog::getSaveFileName(this, "Save Image", default_file_name, filter);
+
+    if (!saveFileName.isEmpty()) {
+        // Update the save path with the new directory
+        GlobalResources::save_path = QFileInfo(saveFileName).absolutePath().toStdString();
+        opencv.saveImage(saveFileName.toStdString());
+    }
 }

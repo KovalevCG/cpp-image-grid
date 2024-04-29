@@ -17,7 +17,6 @@ ImageLabel::ImageLabel(int col, int row, QWidget* parent) : QLabel(parent), labe
 
 void ImageLabel::setImage() {
     std::string path = GlobalResources::getImagePath(label_col, label_row);
-    // std::cout << "Column: " << label_col << "; Row: " << label_row << std::endl;
     if (path == GlobalResources::bg_path_opencv) {
         path = GlobalResources::bg_path_qt;
         QString img_qstr_path = QString::fromStdString(path);
@@ -54,24 +53,7 @@ void ImageLabel::dragEnterEvent(QDragEnterEvent* event) {
 void ImageLabel::dropEvent(QDropEvent* event) {
     const QMimeData* mimeData = event->mimeData();
 
-    if (mimeData->hasImage()) {
-        // I should remove this later
-        //std::cout << "hasImage() Drop" << std::endl;
-        // Direct image data (e.g., from another application)
-        //auto image = qvariant_cast<QImage>(mimeData->imageData());
-        //setPixmap(QPixmap::fromImage(image).scaled(size(), Qt::KeepAspectRatio, Qt::SmoothTransformation));
-        //event->acceptProposedAction();
-    }
-    else if (mimeData->hasUrls()) {
-        //std::cout << "hasUrls() Drop" << std::endl;
-        // Image file dropped
-        // 
-        //event.setDropAction(QtCore.Qt.CopyAction)
-        //file_path = event.mimeData().urls()[0].toLocalFile()
-        //self.set_image(file_path)
-        //self.assignImagePath(self.objectName(), file_path)
-        //event.accept()
-        //update_ocv_images = True
+    if (mimeData->hasUrls()) {
 
         auto urls = mimeData->urls();
         if (!urls.isEmpty()) {

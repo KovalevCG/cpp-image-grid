@@ -23,6 +23,7 @@ private:
 	void showGridImages();
 	void hideMeForScreenshot(int scrn, int c, int r);
 	void makeScreenshot(int scrn, int c, int r);
+	void freeVersionWindow();
 	QVBoxLayout* constructImageAndScreenshotLayout(int c, int r);
 
 	QIcon demerge_column_icon;

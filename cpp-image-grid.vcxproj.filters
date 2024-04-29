@@ -52,6 +52,9 @@
     <ClCompile Include="ocv-test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="qt-test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <QtMoc Include="dynamic-qt-grid.h">
@@ -61,6 +64,9 @@
       <Filter>Header Files</Filter>
     </QtMoc>
     <QtMoc Include="qt-window.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
+    <QtMoc Include="qt-test.h">
       <Filter>Header Files</Filter>
     </QtMoc>
   </ItemGroup>

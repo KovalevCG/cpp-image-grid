@@ -1,14 +1,32 @@
 #pragma once
 
-#include <opencv2/core.hpp>
+//#include <opencv2/core.hpp>
+//
+//class OcvTest
+//{
+//public:
+//	void runTest();
+//	
+//private:
+//	void alphaBlend(const cv::Mat& foreground, const cv::Mat& background, const cv::Mat& alpha, cv::Mat& outImage);
+//
+//};
 
-class OcvTest
-{
+
+
+
+
+//#include <functional>
+//
+
+#include <functional>
+
+class OcvTest {
 public:
-	void runTest();
-	
+    OcvTest();
+    void show();
+    void setAboutCallback(const std::function<void()>& callback);
+
 private:
-	void alphaBlend(const cv::Mat& foreground, const cv::Mat& background, const cv::Mat& alpha, cv::Mat& outImage);
-
+    std::function<void()> aboutCallback;
 };
-

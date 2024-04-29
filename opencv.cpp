@@ -1,5 +1,9 @@
 #include "opencv.h"
 #include "global-resources.h"
+#include "qt-window.h"
+
+#include <QWidget>
+#include <QApplication>
 
 #include <chrono>
 #include <algorithm>
@@ -7,7 +11,6 @@
 using std::cout;
 using std::endl;
 
-// Constructor
 OpenCV::OpenCV() {
     for (auto& row : zoom) { // Initialize all elements to 1.0
         row.fill(1.0);
@@ -20,8 +23,8 @@ void OpenCV::startOpencvMainLoop() {
     bool close_ocv = false;
     bool update_ocv_images = true;
 
-    // cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE);
-    cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE | cv::WINDOW_GUI_NORMAL);
+    //cv::namedWindow("Edit", cv::WINDOW_AUTOSIZE | cv::WINDOW_GUI_NORMAL);
+    cv::namedWindow("Edit");
     cv::moveWindow("Edit", 50, 50);
     cv::setMouseCallback("Edit", onMouse, this);
 
@@ -45,12 +48,10 @@ void OpenCV::startOpencvMainLoop() {
     setTotalSizes();
 
     // Save As Button
-    // ---------------
-
-    // Load the foreground and background images and alpha masks
-    cv::Mat background = cv::imread("images/test/background.png", cv::IMREAD_COLOR);
-    cv::Mat mask_thin = cv::imread("images/test/mask_thin.png", cv::IMREAD_GRAYSCALE);
-    cv::Mat mask_thick = cv::imread("images/test/mask_thick.png", cv::IMREAD_GRAYSCALE);
+    // Load masks
+    cv::Mat mask_thin = cv::imread("images/mask_thin.png", cv::IMREAD_GRAYSCALE);
+    cv::Mat mask_thick = cv::imread("images/mask_thick.png", cv::IMREAD_GRAYSCALE);
+    // Create foreground
     cv::Mat foreground_highlighted = cv::Mat::zeros(40, 40, CV_8UC3);
     foreground_highlighted.setTo(HIGHLIGHT_COLOR);
     cv::Mat foreground_white = cv::Mat::zeros(40, 40, CV_8UC3);
@@ -59,33 +60,17 @@ void OpenCV::startOpencvMainLoop() {
     foreground_black.setTo(BLACK_COLOR);
 
 
-
-    //cv::Mat img_save = cv::imread("images/save-opencv.png");
-    //cv::resize(img_save, img_save, cv::Size(40, 40), 0, 0, cv::INTER_LINEAR);
-    //// Extract mask and create inverted mask
-    //cv::Mat img_save_mask = img_save.clone();
-    //cv::cvtColor(img_save, img_save_mask, cv::COLOR_BGR2GRAY); // Assuming the mask is in the first channel
-    //cv::Mat img_save_mask_inverted;
-    //cv::bitwise_not(img_save_mask, img_save_mask_inverted);
-
-    //// Create a white image with the same size as img_save
-    //cv::Mat img_save_white = cv::Mat::ones(img_save.rows, img_save.cols, img_save.type()) * 128;
-
-
     while (!close_ocv) {
 
         // update opencv images if needed
         if (update_ocv_images) {
-            std::cout << "--- Update Images Start ---" << std::endl;
             opencvReadImages();
             update_ocv_images = false;
         }
 
         // Stack Images
         // If we don't have combined columns
-
         cv::Mat stack;
-
         if (!GlobalResources::anyMergedCols()) {
             cv::Mat border_w = cv::Mat::zeros(1, width_total, CV_8UC3);
             cv::Mat border_w_highlighted = border_w.clone();
@@ -100,7 +85,6 @@ void OpenCV::startOpencvMainLoop() {
                      stack_r = cv::Mat::zeros(cell_heights[r], 1, CV_8UC3);
                      cv::hconcat(stack_r, img_edit, stack_r);
                      cv::hconcat(stack_r, border_h, stack_r);
-
                 }
                 else {
                     stack_r = cv::Mat::zeros(cell_heights[r], 1, CV_8UC3);
@@ -185,7 +169,7 @@ void OpenCV::startOpencvMainLoop() {
             stack.col(stack.cols - 1) = HIGHLIGHT_COLOR;
         }
 
-        // SAVE BUTTON
+        // Save Button
         // Creating ROI
         cv::Rect roi_save(stack.cols - mask_thick.cols, 0, mask_thick.cols, mask_thick.rows);
         cv::Mat roi = stack(roi_save);
@@ -198,11 +182,25 @@ void OpenCV::startOpencvMainLoop() {
             foreground_black.copyTo(roi, mask_thin);
         }
 
+        // Text Free Version
+        int stack_height = stack.rows;
+        int stack_width = stack.cols;
+        cv::Point textOrigin(25, stack_height - 8);
+        std::string text = "ImageGrid v. 2.0.0 FREE VERSION. Personal and non-commercial use only.";
+        int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+        double fontScale = 0.3;
+        int thickness = 1;
+        cv::Scalar textColor(128, 128, 128);
+        // Put text on the image
+        cv::putText(stack, text, textOrigin, fontFace, fontScale, textColor, thickness, cv::LINE_AA);
 
+
+
+        // Show Final Image 
         cv::imshow("Edit", stack);
 
         if ((cv::waitKey(1) & 0xFF) == 'q') {
-            close_ocv = true;  // Assuming close_ocv is the equivalent boolean controlling the loop.
+            close_ocv = true;
         }
 
         // Check if the window is no longer visible
@@ -218,7 +216,6 @@ void OpenCV::opencvReadImages() {
     // Load images based on paths in GlobalResources
     for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
         for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
-            std::cout << GlobalResources::getImagePath(c, r) << std::endl;
             images[c][r] = cv::imread(GlobalResources::getImagePath(c, r), cv::IMREAD_COLOR);
         }
     }
@@ -228,16 +225,15 @@ void OpenCV::setTotalSizes() {
     width_total = 0;
     height_total = 0;
 
-    for (int c = 0; c < GlobalResources::num_of_cols; ++c) {
+    for (int c = 0; c < num_of_cols; ++c) {
         width_total += cell_widths[c];
     }
-    for (int r = 0; r < GlobalResources::num_of_rows; ++r) {
+    for (int r = 0; r < num_of_rows; ++r) {
         height_total += cell_heights[r];
     }
-    width_total += GlobalResources::num_of_cols + 1;
-    height_total += GlobalResources::num_of_rows + 1;
+    width_total += num_of_cols + 1;
+    height_total += num_of_rows + 1;
 
-    // std::cout << "width_total : " << width_total << ";   height_total : " << height_total << std::endl;
 }
 
 void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
@@ -245,6 +241,8 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
 
     int c;
     int r;
+
+    cout << "x: " << x << ";   y: " << y << endl;
 
     if (!self->resize) {
         self->mousePosition(x, y);
@@ -261,26 +259,21 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                 self->start_y = y - self->tr_y[c][r];
             }
             else if (self->mouse_on_type == "save_button") {
-                cout << "SAVE" << endl;
                 // Trigger save file dialog
-                // self->saveFileDialog();
-                self->saveImage();
+                self->runSaveFileDialogFromQt();
             }
             else {
                 self->resize = true;
-                cout << "RESIZE START" << endl;
             }
             break;
 
         case cv::EVENT_LBUTTONUP:
             self->move = false;
             self->resize = false;
-            cout << "STOP" << endl;
             break;
 
         case cv::EVENT_MOUSEMOVE:
             if (self->move) {
-                // cout << "mousemove && move" << endl;
                 self->tr_x[c][r] = x - self->start_x;
                 self->tr_y[c][r] = y - self->start_y;
             }
@@ -288,7 +281,6 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                 // bool block = false;
                 // Resize Vertical Border
                 if (self->mouse_on_type == "border_v") {
-                    // self->border_time = std::chrono::system_clock::now();
                     int delta = int((x - self->width_total) / self->num_of_cols);
                     for (int i = 0; i < self->cell_widths.size(); ++i) {
                         int new_width = self->cell_widths[i] + delta;
@@ -304,7 +296,7 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
 
                         bool block = false;
                         int width = 1;
-                        std::array<int, 20> tmp_cell_widths = self->cell_widths;
+                        std::array<int, SIZE> tmp_cell_widths = self->cell_widths;
                         int delta = 0;
                         int i;
                         int quit_loop = 0;
@@ -357,9 +349,6 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                             while (i < abs(delta)) {
                                 self->resize_inc_left += 1;
                                 int col = self->resize_inc_left % (self->mouse_on_num + 1);
-                                // mod = self->resize_inc_right % (self->num_of_cols - (self->mouse_on_num + 1));
-                                // cout << self->resize_inc_right << "mod: " << mod << endl;
-                                // int col = mod + self->mouse_on_num + 1;
                                 int tmp = tmp_cell_widths[col] - 1;
                                 if (tmp >= 40) {
                                     tmp_cell_widths[col] = tmp;
@@ -403,17 +392,6 @@ void OpenCV::onMouse(int event, int x, int y, int flags, void* userdata) {
                             self->cell_widths[self->mouse_on_num] = width_left;
                             self->cell_widths[self->mouse_on_num + 1] = width_right;
                         }
-
-
-
-                        //int left_index = self->mouse_on_num;
-                        //int right_index = left_index + 1 < self->cell_widths.size() ? left_index + 1 : left_index;
-
-                        //if (self->cell_widths[left_index] + delta > 40 && self->cell_widths[right_index] - delta > 40) {
-                        //    self->cell_widths[left_index] += delta;
-                        //    self->cell_widths[right_index] -= delta;
-                        //}
-                        // self->setTotalSizes();
                     }
                 }
                 else if (self->mouse_on_type == "border_h") {
@@ -683,7 +661,7 @@ cv::Mat OpenCV::createImage(int col, int row, std::string combined, bool resize)
         cv::resize(img_edit, img_edit, target_size, 0, 0, cv::INTER_AREA);
     }
     else {
-        cout << "- No Resize -" << endl;
+        // out << "- No Resize -" << endl;
     }
 
     return img_edit;
@@ -716,7 +694,6 @@ cv::Mat OpenCV::createSaveImage(int col, int row, std::string combined, bool res
 
 void OpenCV::saveImage(std::string path) {
 
-    // std::array<double, 400> cell_scale_coefs {};
     std::vector <double> cell_scale_coefs;
     cv::Mat img_edit;
 
@@ -757,7 +734,6 @@ void OpenCV::saveImage(std::string path) {
 
     // Calculation of global list vars "cell_save_widths[]" and "cell_save_heights[]"
     auto max_scale_coef = std::max_element(cell_scale_coefs.begin(), cell_scale_coefs.end());
-    // std::cout << "MAX: " << *max_scale_coef << endl;
     if ((width_total * *max_scale_coef) < GlobalResources::SAVE_RESOLUTION_WIDTH) {
         for (int i = 0; i < cell_widths.size(); i++) {
             cell_save_widths[i] = int(cell_widths[i] * *max_scale_coef);
@@ -785,8 +761,8 @@ void OpenCV::saveImage(std::string path) {
     for (int i = 0; i < num_of_rows; i++) {
         height_save_total += cell_save_heights[i];
     }
-    width_save_total += GlobalResources::num_of_cols + 1;
-    height_save_total += GlobalResources::num_of_rows + 1;
+    width_save_total += num_of_cols + 1;
+    height_save_total += num_of_rows + 1;
 
 
     // Stack Images
@@ -843,6 +819,25 @@ void OpenCV::saveImage(std::string path) {
             cv::hconcat(stack, border_h, stack);
         }
     }
-    cv::imwrite("d:/stack.jpg", stack);
 
+    // Text Free Version
+    int stack_height = stack.rows;
+    int stack_width = stack.cols;
+    cv::Point textOrigin(25, stack_height - 8);
+    std::string text = "ImageGrid v. 2.0.0 FREE VERSION. Personal and non-commercial use only.";
+    int fontFace = cv::FONT_HERSHEY_SIMPLEX;
+    double fontScale = 0.3;
+    int thickness = 1;
+    cv::Scalar textColor(128, 128, 128);
+    // Put text on the image
+    cv::putText(stack, text, textOrigin, fontFace, fontScale, textColor, thickness, cv::LINE_AA);
+
+    cv::imwrite(path, stack);
+
+}
+
+void OpenCV::runSaveFileDialogFromQt() {
+    QWidget* mainWindow = qApp->property("mainWindow").value<QWidget*>();
+    QtWindow* window = qobject_cast<QtWindow*>(mainWindow);
+    window->saveFileDialog();
 }

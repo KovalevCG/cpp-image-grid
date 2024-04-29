@@ -45,7 +45,6 @@ bool Screenshot::screenshotRegion(int c, int r) {
             int y2 = std::max(screen_y_start, screen_y_end);
             int x1 = std::min(screen_x_start, screen_x_end);
             int x2 = std::max(screen_x_start, screen_x_end);
-            // screen_final(cv::Rect(x1, y1, x2 - x1, y2 - y1)) = screen(cv::Rect(x1, y1, x2 - x1, y2 - y1)).clone();
             if ((x2 - x1 > 0) && (y2 - y1 > 0)) {
                 screen(cv::Rect(x1, y1, x2 - x1, y2 - y1)).copyTo(screen_final(cv::Rect(x1, y1, x2 - x1, y2 - y1)));
             }
@@ -63,10 +62,6 @@ bool Screenshot::screenshotRegion(int c, int r) {
 
         cv::imshow("Screenshot Cropping", screen_final);
         int key = cv::waitKey(1);
-
-        //if (key == 27 || !cv::getWindowProperty("Screenshot Cropping", cv::WND_PROP_VISIBLE) || screen_region_done) {
-        //    break;
-        //}
 
         if (key == 27) {
             break;
@@ -135,7 +130,6 @@ void Screenshot::updateMousePosition(int event, int x, int y, int flags) {
             screen_y_end = y;
             if (!show_rectangle) {
                 show_rectangle = true;
-                // cout << "show rectangle" << endl;
             }
         }
     }

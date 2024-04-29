@@ -1,13 +1,10 @@
 #pragma once
 #include "global-resources.h"
 
-// #include "opencv.h"
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 
 #include <array>
-
-// #include <QThread>
 
 class OpenCV {
 
@@ -17,7 +14,8 @@ public:
     void saveImage(std::string path = "");
 
 private:
-    static constexpr int SIZE = 20;
+
+    static constexpr size_t SIZE = 2;
 
     void opencvReadImages();
     void setTotalSizes();
@@ -25,13 +23,12 @@ private:
     cv::Mat createImage(int col, int row, std::string combined = "none", bool resize = true);
     cv::Mat createSaveImage(int col, int row, std::string combined = "none", bool resize = true);
     void mousePosition(int x, int y);
+    void runSaveFileDialogFromQt();
 
     bool close_ocv = false;
     bool update_ocv_images = true;
     bool resize = false;
     bool move = false;
-    // bool shift_pressed = false;     // Perhaps unnecessary
-
 
     cv::Scalar HIGHLIGHT_COLOR = cv::Scalar(220, 220, 0);
     cv::Scalar WHITE_COLOR = cv::Scalar(245, 245, 245);
@@ -60,8 +57,6 @@ private:
     int start_y = 0;
     std::string mouse_on_type = "none";
     int mouse_on_num = 0;
-
-    // std::chrono::time_point<std::chrono::system_clock> border_time;
 
     // Save Image
     int width_save_total = 0;

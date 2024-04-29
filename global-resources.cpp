@@ -12,13 +12,14 @@ void GlobalResources::initGlobalResources() {
 }
 
 // Variables
-std::array<std::array<std::string, 20>, 20> GlobalResources::img_paths;
-std::array<bool, 20> GlobalResources::merged_cols{ false };
-std::array<bool, 20> GlobalResources::merged_rows{ false };
+std::array<std::array<std::string, GlobalResources::SIZE>, GlobalResources::SIZE> GlobalResources::img_paths;
+std::array<bool, GlobalResources::SIZE> GlobalResources::merged_cols{ false };
+std::array<bool, GlobalResources::SIZE> GlobalResources::merged_rows{ false };
 int GlobalResources::num_of_cols = 2;
 int GlobalResources::num_of_rows = 2;
 std::string GlobalResources::bg_path_opencv = "images//bg_image_opencv.png";
 std::string GlobalResources::bg_path_qt = "images//bg_image_qt_white.png";
+std::string GlobalResources::save_path = "";
 // Settings
 const std::string GlobalResources::VERSION = "2.0.0";
 

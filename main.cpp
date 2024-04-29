@@ -20,12 +20,13 @@ int main(int argc, char* argv[]) {
     FILE* stream;
     stream = freopen("CONOUT$", "w", stdout);
     stream = freopen("CONOUT$", "w", stderr);
-    std::cout << "Console output enabled.\n";
+     std::cout << "Console output enabled.\n";
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();
 
     QtWindow window;
+    app.setProperty("mainWindow", QVariant::fromValue<QWidget*>(&window));
     window.show();
     return app.exec();
-}
+} 
