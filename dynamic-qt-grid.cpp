@@ -237,6 +237,16 @@ QVBoxLayout* DynamicQtGrid::constructImageAndScreenshotLayout(int c, int r) {
     screenBtn3->setToolTip("Screenshot of third monitor");
     screenBtn3->setIcon(monitor_3_icon);
 
+    // Check GlobalResources::WIN_VERSION
+    if (GlobalResources::WIN_VERSION != 10) {
+        screenBtn1->setEnabled(false);
+        screenBtn1->setToolTip("Currently works on Windows 10 only");
+        screenBtn2->setEnabled(false);
+        screenBtn2->setToolTip("Currently works on Windows 10 only");
+        screenBtn3->setEnabled(false);
+        screenBtn3->setToolTip("Currently works on Windows 10 only");
+    }
+
     // Add Items to Layouts
     screenshotLayout->addWidget(screenBtn1);
     if (QApplication::screens().size() > 1) {

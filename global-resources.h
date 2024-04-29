@@ -15,7 +15,7 @@ public:
     static const int SAVE_RESOLUTION_HEIGHT = 1200;
     static const std::string VERSION;
     static std::string save_path;
-    static std::string WIN_VERSION;
+    static long WIN_VERSION;
 
     // Methods for "img_paths" array
     static void setImagePath(size_t col, size_t row, const std::string& img_path);

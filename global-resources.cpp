@@ -22,6 +22,7 @@ std::string GlobalResources::bg_path_qt = "images//bg_image_qt_white.png";
 std::string GlobalResources::save_path = "";
 // Settings
 const std::string GlobalResources::VERSION = "2.0.0";
+long GlobalResources::WIN_VERSION = 0;
 
 void GlobalResources::setImagePath(size_t col, size_t row, const std::string& path) {
     if (row < SIZE && col < SIZE) {

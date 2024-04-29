@@ -1,9 +1,8 @@
+// MAIN FILE OF PROJECT
+
 #ifndef NT_SUCCESS
 #define NT_SUCCESS(Status) (((NTSTATUS)(Status)) >= 0)
 #endif
-
-
-// MAIN PROJECT
 
 #include "qt-window.h"
 #include "global-resources.h"
@@ -15,10 +14,8 @@
 #include <Windows.h>
 #include <iostream>
 
-
-
+// Check Windows Version
 typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
-
 void CheckWindowsVersion() {
     HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
     if (hMod) {
@@ -27,9 +24,7 @@ void CheckWindowsVersion() {
             RTL_OSVERSIONINFOW rovi = {};
             rovi.dwOSVersionInfoSize = sizeof(rovi);
             if (NT_SUCCESS(fxPtr(&rovi))) {
-                // std::cout << "Windows Version: " << rovi.dwMajorVersion << "." << rovi.dwMinorVersion << std::endl;
                 GlobalResources::WIN_VERSION = rovi.dwMajorVersion;
-                // std::cout << "Build Number: " << rovi.dwBuildNumber << std::endl;
             }
         }
     }
@@ -51,6 +46,7 @@ int main(int argc, char* argv[]) {
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();
+    // Check Windows Version
     CheckWindowsVersion();
 
     QtWindow window;
