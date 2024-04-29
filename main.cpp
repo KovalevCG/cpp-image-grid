@@ -27,9 +27,9 @@ void CheckWindowsVersion() {
             RTL_OSVERSIONINFOW rovi = {};
             rovi.dwOSVersionInfoSize = sizeof(rovi);
             if (NT_SUCCESS(fxPtr(&rovi))) {
-                std::cout << "Windows Version: " << rovi.dwMajorVersion << "."
-                    << rovi.dwMinorVersion << std::endl;
-                std::cout << "Build Number: " << rovi.dwBuildNumber << std::endl;
+                // std::cout << "Windows Version: " << rovi.dwMajorVersion << "." << rovi.dwMinorVersion << std::endl;
+                GlobalResources::WIN_VERSION = rovi.dwMajorVersion;
+                // std::cout << "Build Number: " << rovi.dwBuildNumber << std::endl;
             }
         }
     }
@@ -48,10 +48,10 @@ int main(int argc, char* argv[]) {
     stream = freopen("CONOUT$", "w", stdout);
     stream = freopen("CONOUT$", "w", stderr);
     std::cout << "Console output enabled.\n";
-    CheckWindowsVersion();
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();
+    CheckWindowsVersion();
 
     QtWindow window;
     app.setProperty("mainWindow", QVariant::fromValue<QWidget*>(&window));
