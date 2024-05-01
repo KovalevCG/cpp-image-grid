@@ -7,6 +7,9 @@
 #include <iomanip>
 #include <string>
 
+#define NOMINMAX
+#include <windows.h>
+
 using std::cout;
 using std::endl;
 
@@ -25,6 +28,7 @@ bool Screenshot::screenshotRegion(int c, int r) {
     cv::setWindowProperty("Screenshot Cropping", cv::WND_PROP_FULLSCREEN, cv::WINDOW_FULLSCREEN);
     cv::setMouseCallback("Screenshot Cropping", Screenshot::mouseScreenshot, this);
 
+    // CreateDirectory("screenshots", NULL);
     std::ostringstream oss;
     oss << "screenshots/screenshot_"
         << std::setw(2) << std::setfill('0') << c << "_"

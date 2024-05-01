@@ -5,7 +5,8 @@
 
 # My Files
 youtube/
-screenshots/
+screenshots/*
+!screenshots/.gitkeep
 
 # User-specific files
 *.rsuser
