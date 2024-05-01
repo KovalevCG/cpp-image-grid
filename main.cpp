@@ -9,12 +9,12 @@
 
 #include <QApplication>
 
-// Console Output
-#include <fstream>
+//// Console Output
+//#include <fstream>
 #include <Windows.h>
-#include <iostream>
+// #include <iostream>
 
-// Check Windows Version
+// Checking Windows Version
 typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 void CheckWindowsVersion() {
     HMODULE hMod = ::GetModuleHandleW(L"ntdll.dll");
@@ -24,12 +24,19 @@ void CheckWindowsVersion() {
             RTL_OSVERSIONINFOW rovi = {};
             rovi.dwOSVersionInfoSize = sizeof(rovi);
             if (NT_SUCCESS(fxPtr(&rovi))) {
-                GlobalResources::WIN_VERSION = rovi.dwMajorVersion;
+                if (rovi.dwBuildNumber >= 22000) {
+                    GlobalResources::WIN_VERSION = 11;
+                }
+            }
+            else {
             }
         }
+        else {
+        }
+    }
+    else {
     }
 }
-
 
 
 int main(int argc, char* argv[]) {
@@ -37,12 +44,12 @@ int main(int argc, char* argv[]) {
     // Qt Application
     QApplication app(argc, argv);
 
-    // Console Output
-    AllocConsole();
-    FILE* stream;
-    stream = freopen("CONOUT$", "w", stdout);
-    stream = freopen("CONOUT$", "w", stderr);
-    std::cout << "Console output enabled.\n";
+    //// Console Output
+    //AllocConsole();
+    //FILE* stream;
+    //stream = freopen("CONOUT$", "w", stdout);
+    //stream = freopen("CONOUT$", "w", stderr);
+    //std::cout << "Console output enabled.\n";
 
     // GlobalResources Init
     GlobalResources::initGlobalResources();

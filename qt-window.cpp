@@ -68,6 +68,12 @@ void QtWindow::setupUi() {
     editButton->setIcon(QIcon("images/icons/edit.svg"));
     editButton->setIconSize(QSize(20, 20));
     editButton->setToolTip("Open Editor");
+    // editButton->setStyleSheet("QPushButton { background-color: rgb(225, 225, 225); border-width: 1px; border-style: solid;}");
+    //editButton->setStyleSheet("QPushButton {"
+    //    "background-color: rgb(225, 225, 225);"
+    //    "border: 2px solid transparent;"
+    //    "padding: 2px;"
+    //    "}");
     connect(editButton, &QPushButton::clicked, this, &QtWindow::onEditButtonClicked);
 
     // Vertical Layout
