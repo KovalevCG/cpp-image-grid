@@ -14,6 +14,10 @@
 #include <Windows.h>
 // #include <iostream>
 
+#include <iostream>
+#include <chrono>
+#include <ctime>
+
 // Checking Windows Version
 typedef NTSTATUS(WINAPI* RtlGetVersionPtr)(PRTL_OSVERSIONINFOW);
 void CheckWindowsVersion() {
@@ -38,8 +42,30 @@ void CheckWindowsVersion() {
     }
 }
 
+// Check Date
+bool isDateLessThen() {
+
+    // Get current system time as a time_point
+    auto now = std::chrono::system_clock::now();
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+    struct tm* parts = std::localtime(&now_c);
+    int year = 1900 + parts->tm_year;
+
+    // Check the year
+    if (year <= 2024) {
+        return true;
+    }
+    else {
+        return false;
+    }
+}
+
 
 int main(int argc, char* argv[]) {
+
+    if (!isDateLessThen()) {
+        return 0;
+    }
 
     // Qt Application
     QApplication app(argc, argv);

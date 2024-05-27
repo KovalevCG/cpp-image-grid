@@ -7,8 +7,8 @@
 #include <iomanip>
 #include <string>
 
-#define NOMINMAX
-#include <windows.h>
+//#define NOMINMAX
+//#include <windows.h>
 
 using std::cout;
 using std::endl;
